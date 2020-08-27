@@ -6,20 +6,20 @@ describe('convertTransaction', () => {
       {
         info:
           {
-            id: 855984970,
-            operationType: 'account_transaction',
-            skbPaymentOperationType: null,
-            subType: 'sbp_in',
+            id: 856924346,
+            operationType: 'payment',
+            skbPaymentOperationType: 'p2p',
+            subType: 'p2p',
             hasOfdReceipt: false
           },
         view:
           {
-            operationIcon: 'https://ib.delo.ru/imgcache/bankIcon_ii312846257.png',
+            operationIcon: 'https://ib.delo.ru/imgcache/bankIcon_ii312846246.png',
             descriptions:
               {
-                operationDescription: 'Николаев Николай Николаевич',
-                productDescription: 'Счет Mastercard Unembossed',
-                productType: 'На счет карты'
+                operationDescription: 'В "СКБ-Банк" на карту ***6004',
+                productDescription: 'Сбербанк',
+                productType: 'C карты'
               },
             amounts:
               {
@@ -28,25 +28,20 @@ describe('convertTransaction', () => {
                 feeAmount: 0,
                 feeCurrency: 'RUB',
                 bonusAmount: 0,
-                bonusCurrency: 'RUB',
+                bonusCurrency: null,
                 cashBackAmount: 0,
-                cashBackCurrency: 'RUB'
+                cashBackCurrency: null
               },
-            mainRequisite: 'Из АО "ТИНЬКОФФ БАНК"',
-            actions: ['sendCheck', 'print', 'reversePayment'],
-            category:
-              {
-                id: 394010366,
-                internalCode: 'replenishment',
-                name: 'Пополнения'
-              },
-            state: 'processed',
-            dateCreated: '2020-08-20T11:08:36+05:00',
-            payWallet: null,
+            mainRequisite: 'С карты ***4617',
+            actions: ['sendCheck', 'print', 'toFavorite', 'repeatable'],
+            category: { id: 394010367, internalCode: 'transfer', name: 'Переводы' },
+            state: 'rejected',
+            dateCreated: '2020-08-22T17:23:19+05:00',
+            payWallet: false,
             direction: 'credit',
-            comment: 'Перевод с использованием Системы быстрых платежей',
-            productAccount: '40817810100015387612',
-            productCardId: null
+            comment: null,
+            productAccount: null,
+            productCardId: 170971097
           }
       },
       {
@@ -83,24 +78,8 @@ describe('convertTransaction', () => {
         ]
       }
     ]
-  ])('should convert SBP transfer', (rawTransaction, transaction) => {
+  ])('should convert Card transfer', (rawTransaction, transaction) => {
     const accounts = { id: 'account', instrument: 'RUB' }
     expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
   })
 })
-
-/*
-
-})).toEqual({
-    comment: 'Николаев Николай Николаевич',
-      date: '2020-08-20T11:08:36+05:00',
-      hold: false,
-      id: '855984970',
-      income: 10000,
-      incomeAccount: '40817810100015387612',
-      outcome: 0,
-      outcomeAccount: '40817810100015387612'
-    })
-  })
-
-*/

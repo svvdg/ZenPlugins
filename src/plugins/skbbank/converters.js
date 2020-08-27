@@ -74,7 +74,7 @@ export function convertTransaction (account, rawTransaction) {
     instrument: rawTransaction.view.amounts.currency
   }
   // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
-  let accountId = rawTransaction.view.productAccount
+  let accountId = rawTransaction.view.productAccount || rawTransaction.view.productCardId
   if (!accountId && rawTransaction.info.operationType === 'payment') {
     accountId = findAccountByStoredId(account, rawTransaction.details['payee-card']).id
   }
@@ -105,46 +105,48 @@ export function convertTransaction (account, rawTransaction) {
     if (mcc) {
       transaction.merchant.mcc = Number(mcc[1])
     }
-  }
-
-  /*
-  ;
+  };
   [
-    parseTitle,
+    // parseTitle,
     parseTransferAccountTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice))
-  */
 
   return transaction
 }
-/*
+
 function parseTransferAccountTransaction (rawTransaction, transaction, invoice) {
-  for (const pattern of [
-    /Отправка денежного/i,
-    /Перевод средств/i,
-    /Пополнение счета/i
-  ]) {
-    const match = rawTransaction.details.match(pattern)
-    if (match) {
-      transaction.comment = rawTransaction.details
-      transaction.movements.push(
-        {
-          id: null,
-          account: {
-            type: null,
-            instrument: invoice.instrument,
-            syncIds: null,
-            company: null
-          },
-          invoice: null,
-          sum: -invoice.sum,
-          fee: 0
-        })
+  if (rawTransaction.view.direction === 'credit') {
+    for (const pattern of [
+      // /Отправка денежного/i,
+      /Перевод/i
+      // /Переводы/i
+    ]) {
+      const match = rawTransaction.view.comment.match(pattern) ||
+        rawTransaction.view.category.name.match(/Переводы/i)
+      if (match) {
+        transaction.comment = rawTransaction.view.comment
+        transaction.movements.push(
+          {
+            id: null,
+            account: {
+              type: null,
+              instrument: invoice.instrument,
+              syncIds: [
+                rawTransaction.view.productAccount
+                // rawTransaction.view.mainRequisite.match(/\d{-4}/)
+              ],
+              company: null
+            },
+            invoice: null,
+            sum: -invoice.sum,
+            fee: 0
+          }
+        )
+      }
     }
   }
   return false
 }
-*/
 
 /*
 export function convertAccountTransaction (json, accounts) {

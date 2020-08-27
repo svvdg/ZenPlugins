@@ -68,7 +68,86 @@ function findAccountByStoredId (accounts, storedId) {
   console.assert(false, 'cannot find storedId ' + storedId)
 }
 
-export function convertTransaction (json, accounts) {
+export function convertTransaction (account, rawTransaction) {
+  const invoice = {
+    sum: rawTransaction.view.amounts.amount,
+    instrument: rawTransaction.view.amounts.currency
+  }
+  // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
+  let accountId = rawTransaction.view.productAccount
+  if (!accountId && rawTransaction.info.operationType === 'payment') {
+    accountId = findAccountByStoredId(account, rawTransaction.details['payee-card']).id
+  }
+
+  const transaction = {
+    date: rawTransaction.view.dateCreated,
+    hold: rawTransaction.view.state !== 'processed',
+    merchant: {
+      country: null,
+      city: null,
+      title: rawTransaction.view.descriptions.operationDescription || rawTransaction.view.mainRequisite,
+      mcc: null,
+      location: null
+    },
+    movements: [
+      {
+        id: rawTransaction.info.id.toString(),
+        account: { id: account.id },
+        invoice: invoice.instrument === account.instrument ? null : invoice,
+        sum: invoice.instrument === account.instrument ? invoice.sum : rawTransaction.details.convAmount,
+        fee: 0
+      }
+    ],
+    comment: null
+  }
+  if (rawTransaction.view.mainRequisite) {
+    const mcc = rawTransaction.view.mainRequisite.match('МСС: (\\d+)')
+    if (mcc) {
+      transaction.merchant.mcc = Number(mcc[1])
+    }
+  }
+
+  /*
+  ;
+  [
+    parseTitle,
+    parseTransferAccountTransaction
+  ].some(parser => parser(rawTransaction, transaction, invoice))
+  */
+
+  return transaction
+}
+/*
+function parseTransferAccountTransaction (rawTransaction, transaction, invoice) {
+  for (const pattern of [
+    /Отправка денежного/i,
+    /Перевод средств/i,
+    /Пополнение счета/i
+  ]) {
+    const match = rawTransaction.details.match(pattern)
+    if (match) {
+      transaction.comment = rawTransaction.details
+      transaction.movements.push(
+        {
+          id: null,
+          account: {
+            type: null,
+            instrument: invoice.instrument,
+            syncIds: null,
+            company: null
+          },
+          invoice: null,
+          sum: -invoice.sum,
+          fee: 0
+        })
+    }
+  }
+  return false
+}
+*/
+
+/*
+export function convertAccountTransaction (json, accounts) {
   const transaction = {
     id: json.info.id.toString(),
     date: json.view.dateCreated,
@@ -118,3 +197,4 @@ export function convertTransaction (json, accounts) {
   }
   return transaction
 }
+ */

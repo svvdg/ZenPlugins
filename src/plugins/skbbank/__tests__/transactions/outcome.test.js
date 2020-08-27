@@ -45,22 +45,22 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: new Date('2020-07-15T05:53:07.000Z'),
-        hold: false,
+        date: '2020-08-09T17:55:44+05:00',
+        hold: true,
         comment: null,
         merchant: {
           country: null,
           city: null,
-          title: 'YASHNABADSKIY FILIAL OAKB',
-          mcc: null,
+          title: 'Пятерочка',
+          mcc: 5411,
           location: null
         },
         movements: [
           {
-            id: '8991874667',
-            account: { id: 'card' },
+            id: '900000001',
+            account: { id: 'accounts' },
             invoice: null,
-            sum: 2000000.00,
+            sum: 789.67,
             fee: 0
           }
         ]
@@ -167,29 +167,32 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: new Date('2020-07-15T05:53:07.000Z'),
+        date: '2020-07-21T22:17:05+05:00',
         hold: false,
         comment: null,
         merchant: {
           country: null,
           city: null,
-          title: 'YASHNABADSKIY FILIAL OAKB',
-          mcc: null,
+          title: 'RESTORAN "VASILKI"',
+          mcc: 5812,
           location: null
         },
         movements: [
           {
-            id: '8991874667',
-            account: { id: 'card' },
-            invoice: null,
-            sum: 2000000.00,
+            id: '347900002',
+            account: { id: 'accounts' },
+            invoice: {
+              instrument: 'BYN',
+              sum: 43.95
+            },
+            sum: 1430.9,
             fee: 0
           }
         ]
       }
     ]
   ])('should convert payment in foreign currency', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'BYN' }
+    const accounts = { id: 'accounts', instrument: 'RUB' }
     expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
   })
 })

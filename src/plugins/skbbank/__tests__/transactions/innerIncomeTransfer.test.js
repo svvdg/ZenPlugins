@@ -6,7 +6,7 @@ describe('convertTransaction', () => {
       {
         info:
           {
-            id: 856924346,
+            id: 856924379,
             operationType: 'payment',
             skbPaymentOperationType: 'p2p',
             subType: 'p2p',
@@ -35,8 +35,8 @@ describe('convertTransaction', () => {
             mainRequisite: 'С карты ***4617',
             actions: ['sendCheck', 'print', 'toFavorite', 'repeatable'],
             category: { id: 394010367, internalCode: 'transfer', name: 'Переводы' },
-            state: 'rejected',
-            dateCreated: '2020-08-22T17:23:19+05:00',
+            state: 'processed',
+            dateCreated: '2020-08-22T17:23:49+05:00',
             payWallet: false,
             direction: 'credit',
             comment: null,
@@ -45,13 +45,13 @@ describe('convertTransaction', () => {
           }
       },
       {
-        date: '2020-08-20T11:08:36+05:00',
+        date: '2020-08-22T17:23:19+05:00',
         hold: false,
-        comment: 'Перевод с использованием Системы быстрых платежей',
+        comment: 'С карты ***4617',
         merchant: {
           country: null,
           city: null,
-          title: 'Николаев Николай Николаевич',
+          title: 'В "СКБ-Банк" на карту ***6004',
           mcc: null,
           location: null
         },

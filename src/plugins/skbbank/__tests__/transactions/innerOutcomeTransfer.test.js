@@ -4,7 +4,7 @@ describe('convertTransaction', () => {
   it.each([
     [
       {
-        actions: [ 'sendCheck', 'print', 'toFavorite', 'repeatable' ],
+        actions: ['sendCheck', 'print', 'toFavorite', 'repeatable'],
         amount: 10000,
         'another-person-payment': null,
         bankSystemId: null,
@@ -53,7 +53,7 @@ describe('convertTransaction', () => {
         operationDescription: 'В "СКБ-Банк" на карту ***6004',
         operationIcon: 'https://ib.delo.ru/imgcache/bankIcon_ii312846246.png',
         'order-date': '2020-08-22',
-        orderedRequisites: [ { name: 'Банк получателя', value: 'СКБ-Банк' } ],
+        orderedRequisites: [{ name: 'Банк получателя', value: 'СКБ-Банк' }],
         originalRegistry: null,
         outdated: false,
         'payee-account': null,

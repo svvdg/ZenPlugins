@@ -1,41 +1,41 @@
-export function convertCard (json) {
-  if (json.category !== 'card') {
-    console.log('Unexpected category ' + json.category)
+export function convertAccount (rawTransaction) {
+  if (rawTransaction.type !== 'current') {
     return null
   }
   return {
-    id: json.primaryAccount,
-    storedId: json.storedId.toString(), // На этот id приходят платежи при стягивании.
-    type: 'ccard',
-    title: json.name, // 'Mastercard Unembossed'
-    instrument: json.currency, // 'RUB'
-    balance: json.availableBalance, // <= json.balance
-    creditLimit: 0,
-    syncID: [json.pan.slice(-4)]
-  }
-}
-
-export function convertAccount (json) {
-  if (json.type !== 'current') {
-    return null
-  }
-  return {
-    id: json.number,
+    id: rawTransaction.number,
     type: 'checking',
-    title: json.name, // 'Счет RUB'
-    balance: json.balance,
-    instrument: json.currency,
+    title: rawTransaction.name, // 'Счет RUB'
+    balance: rawTransaction.balance,
+    instrument: rawTransaction.currency,
     creditLimit: 0,
-    syncID: [json.number.slice(-4)]
+    syncids: [rawTransaction.number.slice(-4)]
   }
 }
 
-export function convertDeposit (json) {
+export function convertCard (rawTransaction) {
+  if (rawTransaction.category !== 'card') {
+    console.log('Unexpected category ' + rawTransaction.category)
+    return null
+  }
+  return {
+    id: rawTransaction.primaryAccount,
+    storedId: rawTransaction.storedId.toString(), // На этот id приходят платежи при стягивании.
+    type: 'ccard',
+    title: rawTransaction.name, // 'Mastercard Unembossed'
+    instrument: rawTransaction.currency, // 'RUB'
+    balance: rawTransaction.availableBalance, // <= json.balance
+    creditLimit: 0,
+    syncids: [rawTransaction.pan]
+  }
+}
+
+export function convertDeposit (rawTransaction) {
   const payoffInterval = {
     'В конце срока': null
-  }[json.percentPaidPeriod]
+  }[rawTransaction.percentPaidPeriod]
   if (payoffInterval === undefined) {
-    console.log('Unexpected percentPaidPeriod ' + json.percentPaydPeriod)
+    console.log('Unexpected percentPaidPeriod ' + rawTransaction.percentPaydPeriod)
     return null
   }
   let payoffStep = 1
@@ -43,19 +43,19 @@ export function convertDeposit (json) {
     payoffStep = 0
   }
   return {
-    id: json.account,
+    id: rawTransaction.account,
     type: 'deposit',
-    title: json.name,
-    instrument: json.currency,
-    balance: json.balance,
-    capitalization: json.capitalization,
-    percent: json.rate,
-    startDate: json.open_date,
-    endDateOffset: Number(json.duration),
+    title: rawTransaction.name,
+    instrument: rawTransaction.currency,
+    balance: rawTransaction.balance,
+    capitalization: rawTransaction.capitalization,
+    percent: rawTransaction.rate,
+    startDate: rawTransaction.open_date,
+    endDateOffset: Number(rawTransaction.duration),
     endDateOffsetInterval: 'day',
     payoffInterval: payoffInterval,
     payoffStep: payoffStep,
-    syncID: [json.account.slice(-4)]
+    syncids: [rawTransaction.account.slice(-4)]
   }
 }
 
@@ -121,8 +121,7 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
       /Перевод/i
       // /Переводы/i
     ]) {
-      const match = rawTransaction.view.comment.match(pattern) ||
-        rawTransaction.view.category.name.match(/Переводы/i)
+      const match = rawTransaction.view.comment.match(pattern)
       if (match) {
         transaction.comment = rawTransaction.view.comment
         transaction.movements.push(
@@ -143,6 +142,7 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
           }
         )
       }
+      return true
     }
   }
   return false

@@ -60,7 +60,7 @@ describe('convertTransaction', () => {
             id: '900000001',
             account: { id: 'accounts' },
             invoice: null,
-            sum: 789.67,
+            sum: -789.67,
             fee: 0
           }
         ]
@@ -183,9 +183,9 @@ describe('convertTransaction', () => {
             account: { id: 'accounts' },
             invoice: {
               instrument: 'BYN',
-              sum: 43.95
+              sum: -43.95
             },
-            sum: 1430.9,
+            sum: -1430.9,
             fee: 0
           }
         ]

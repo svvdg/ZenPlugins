@@ -68,4 +68,73 @@ describe('convertDeposit', () => {
   ])('converts Deposit', (rawTransaction, transaction) => {
     expect(convertDeposit(rawTransaction)).toEqual(transaction)
   })
+
+  it.each([
+    [
+      {
+        id: 40681782,
+        bank_system_id: '9625677',
+        contract_number: '39913393898',
+        contract_date: '13.03.2014',
+        close_account: null,
+        capitalization: false,
+        currency: 'RUB',
+        opening_balance: 0,
+        min_balance: 0,
+        balance: 0,
+        percentPaidPeriod: 'Ежеквартально',
+        duration: null,
+        open_date: '13.03.2014',
+        end_date: null,
+        early_close: true,
+        rate: 0.01,
+        ratePeriods: [],
+        balanceRub: 1234.56,
+        account: '42301810339901654241',
+        branch_id: 69562,
+        allow_out_payments: true,
+        allow_in_payments: true,
+        percent_manageable: false,
+        capital_manageable: false,
+        percent_account: '42301810339901654241',
+        auto_prolongation: false,
+        state: 'open',
+        state_description: 'Действующий',
+        customName: false,
+        name: 'Вклад до востребования',
+        productName: 'Вклад до востребования',
+        percent_paid: 0.32,
+        percent_accrued: 0,
+        requisites:
+          {
+            bankName: 'ФИЛИАЛ "ВОЛОГОДСКИЙ" ПАО "СКБ-БАНК"',
+            address: 'Россия, 190031, Санкт-Петербург г, Московский пр-кт, д.2, корп.6, кв.77Н, лит.А',
+            bic: '041909781',
+            inn: '6608003052',
+            kpp: '352543001',
+            corrAccount: '30101810300000000781'
+          },
+        petitionId: null,
+        interestType: null,
+        charity: 'forbidden'
+      },
+      {
+        id: '42301810339901654241',
+        type: 'deposit',
+        title: 'Вклад до востребования',
+        instrument: 'RUB',
+        balance: 0,
+        capitalization: false,
+        percent: 0.01,
+        startDate: '13.03.2014',
+        payoffInterval: null,
+        payoffStep: 0,
+        endDateOffset: 0,
+        endDateOffsetInterval: 'day',
+        syncids: ['4241']
+      }
+    ]
+  ])('converts Deposit Credit', (rawTransaction, transaction) => {
+    expect(convertDeposit(rawTransaction)).toEqual(transaction)
+  })
 })

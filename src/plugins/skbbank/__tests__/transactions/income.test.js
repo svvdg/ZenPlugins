@@ -51,13 +51,13 @@ describe('convertTransaction', () => {
       },
       {
         date: '2020-07-13T05:47:02+05:00',
-        hold: true,
+        hold: false,
         comment: null,
         merchant: {
           country: null,
           city: null,
-          title: 'Пятерочка',
-          mcc: 5411,
+          title: 'ВАСИЛЬЕВ ВАСИЛИЙ ВАСИЛЬЕВИЧ',
+          mcc: null,
           location: null
         },
         movements: [
@@ -65,7 +65,7 @@ describe('convertTransaction', () => {
             id: '847324006',
             account: { id: 'accounts' },
             invoice: null,
-            sum: 789.67,
+            sum: 6000,
             fee: 0
           }
         ]

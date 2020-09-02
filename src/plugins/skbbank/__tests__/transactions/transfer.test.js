@@ -149,41 +149,41 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: new Date('2020-07-15T05:53:07.000Z'),
+        date: '2020-08-09T19:23:32+05:00',
         hold: false,
-        comment: null,
+        comment: 'На "Счет Mastercard Unembossed"',
         merchant: {
           country: null,
           city: null,
-          title: 'YASHNABADSKIY FILIAL OAKB',
+          title: 'Между счетами',
           mcc: null,
           location: null
         },
         movements: [
           {
-            id: '41827588',
+            id: '900000001',
             account: { id: 'account' },
             invoice: null,
-            sum: 4300000.00,
+            sum: 1000,
             fee: 0
           },
           {
             id: null,
             account: {
               type: null,
-              instrument: 'UZS',
-              syncIds: null,
+              instrument: 'RUB',
+              syncIds: ['40817810900016392697'],
               company: null
             },
             invoice: null,
-            sum: -4300000.00,
+            sum: -1000,
             fee: 0
           }
         ]
       }
     ]
   ])('should convert transfer', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
+    const accounts = { id: 'account', instrument: 'RUB' }
     expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
   })
 
@@ -271,41 +271,41 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: new Date('2020-07-15T05:53:07.000Z'),
+        date: '2020-08-07T16:16:16+05:00',
         hold: false,
-        comment: null,
+        comment: 'На "Исполнение желаний + (срочный вклад)"',
         merchant: {
           country: null,
           city: null,
-          title: 'YASHNABADSKIY FILIAL OAKB',
+          title: 'Вклады: открытие вклада Исполнение желаний        +',
           mcc: null,
           location: null
         },
         movements: [
           {
-            id: '41827588',
+            id: '850999999',
             account: { id: 'account' },
             invoice: null,
-            sum: 4300000.00,
+            sum: 10000,
             fee: 0
           },
           {
             id: null,
             account: {
               type: null,
-              instrument: 'UZS',
-              syncIds: null,
+              instrument: 'RUB',
+              syncIds: ['40817810700012345678'],
               company: null
             },
             invoice: null,
-            sum: -4300000.00,
+            sum: -10000,
             fee: 0
           }
         ]
       }
     ]
   ])('should convert account transaction', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
+    const accounts = { id: 'account', instrument: 'RUB' }
     expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
   })
 })

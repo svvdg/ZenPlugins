@@ -86,7 +86,7 @@ describe('convertDeposit', () => {
         balance: 0,
         percentPaidPeriod: 'Ежеквартально',
         duration: null,
-        open_date: '03.13.2014', // была дата '13.03.2014'. Переделать надо
+        open_date: '13.03.2014', // была дата '13.03.2014'. Переделать надо
         end_date: null,
         early_close: true,
         rate: 0.01,

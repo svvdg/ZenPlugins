@@ -63,7 +63,7 @@ export function convertDeposit (rawTransaction) {
     balance: rawTransaction.balance,
     capitalization: rawTransaction.capitalization,
     percent: rawTransaction.rate,
-    startDate: new Date(rawTransaction.open_date), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
+    startDate: new Date(parseDate(rawTransaction.open_date)), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
     startBalance: rawTransaction.opening_balance,
     endDateOffset: Number(rawTransaction.duration),
     endDateOffsetInterval: 'day',
@@ -194,6 +194,21 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
   }
   return false
 }
+
+function parseDate (stringDate) {
+  const pattern = /(\d{2}).(\d{2}).(\d{4})/
+  const arrayDate = stringDate.match(pattern)
+  const newDate = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1])
+  return newDate
+}
+
+/*
+var pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+var arrayDate = stringDate.match(pattern);
+var dt = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1]);
+
+var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
+var dt = new Date(st.replace(pattern,'--'));
 /*
 function parseTransferTransaction (rawTransaction, transaction, invoice) {
   if (rawTransaction.view.direction === 'credit') {

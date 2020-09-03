@@ -16,8 +16,8 @@ describe('convertLoan', () => {
         psk: 22.924,
         contractDate: '13.03.2014',
         contractNumber: '39913394134',
-        openDate: '13.03.2014',
-        endDate: '13.11.2023',
+        openDate: '03.13.2014', // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
+        endDate: '11.13.2023', // const { interval, count } = getIntervalBetweenDates(startDate, endDate),
         allowPaymentAmount: 20878.61,
         partialPaymentDate: '14.09.2020',
         planPaymentAmount: 5900,
@@ -57,14 +57,14 @@ describe('convertLoan', () => {
         title: 'ПЕРСОНАЛЬНОЕ ПРЕДЛОЖЕНИЕ (потребительский кредит)',
         instrument: 'RUB',
         balance: -216300,
-        // capitalization: undefined,
-        // percent: 5.2,
-        startDate: '13.03.2014',
+        capitalization: true,
+        percent: 26.9,
+        startDate: new Date('2014-03-12T20:00:00.000Z'), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
         // payoffInterval: null,
         // payoffStep: 0,
-        endDate: '13.11.2023',
+        endDate: new Date('2023-11-12T21:00:00.000Z'), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо'13.11.2023',
         endDateOffsetInterval: 'day',
-        syncids: ['2636']
+        syncids: ['40817810239923082636']
       }
     ]
   ])('converts Loan', (rawTransaction, transaction) => {

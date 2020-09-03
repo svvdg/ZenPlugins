@@ -4,7 +4,7 @@ describe('convertTransaction', () => {
   it.each([
     [
       {
-        actions: ['sendCheck', 'print', 'toFavorite', 'repeatable'],
+        actions: ['sendCheck', 'print', 'toFavorite', 'repeatable'], // По моему эти не надо обрабатывать
         amount: 10000,
         'another-person-payment': null,
         bankSystemId: null,

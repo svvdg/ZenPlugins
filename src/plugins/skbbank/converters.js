@@ -63,12 +63,13 @@ export function convertDeposit (rawTransaction) {
     balance: rawTransaction.balance,
     capitalization: rawTransaction.capitalization,
     percent: rawTransaction.rate,
-    startDate: rawTransaction.open_date,
+    startDate: new Date(rawTransaction.open_date), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
+    startBalance: rawTransaction.opening_balance,
     endDateOffset: Number(rawTransaction.duration),
     endDateOffsetInterval: 'day',
     payoffInterval: payoffInterval,
     payoffStep: payoffStep,
-    syncids: [rawTransaction.account.slice(-4)]
+    syncids: [rawTransaction.account]
   }
 }
 
@@ -92,14 +93,14 @@ export function convertLoan (rawTransaction) {
     title: rawTransaction.name,
     instrument: rawTransaction.currency,
     balance: -rawTransaction.amount,
-    // capitalization: rawTransaction.capitalization, // ???
-    // percent: rawTransaction.rate, // ???
-    startDate: rawTransaction.openDate,
-    endDate: rawTransaction.endDate,
+    capitalization: rawTransaction.capitalization || true,
+    percent: rawTransaction.interestRate,
+    startDate: new Date(rawTransaction.openDate), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
+    endDate: new Date(rawTransaction.endDate), // const { interval, count } = getIntervalBetweenDates(startDate, endDate),
     endDateOffsetInterval: 'day',
     // payoffInterval: payoffInterval,
     // payoffStep: payoffStep,
-    syncids: [rawTransaction.repaymentAccount.slice(-4)]
+    syncids: [rawTransaction.repaymentAccount]
   }
 }
 
@@ -112,7 +113,7 @@ function findAccountByStoredId (accounts, storedId) {
   console.assert(false, 'cannot find storedId ' + storedId)
 }
 
-export function convertTransaction (accounts, rawTransaction) {
+export function convertTransaction (accounts, rawTransaction) { // Не надо обрабатывать:      view.state: 'rejected'      info.subType: 'loan-repayment',
   const invoice = {
     sum: rawTransaction.view.direction === 'debit' ? -rawTransaction.view.amounts.amount : rawTransaction.view.amounts.amount,
     instrument: rawTransaction.view.amounts.currency

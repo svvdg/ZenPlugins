@@ -16,7 +16,7 @@ describe('convertDeposit', () => {
         balance: 10000.00,
         percentPaidPeriod: 'В конце срока',
         duration: '270',
-        open_date: '08.08.2020',
+        open_date: '08.08.2020', // была дата '13.03.2014'. Переделать надо
         end_date: '05.05.2021',
         early_close: true,
         rate: 5.2000,
@@ -57,12 +57,14 @@ describe('convertDeposit', () => {
         balance: 10000,
         capitalization: true,
         percent: 5.2,
-        startDate: '08.08.2020',
+        startDate: new Date('2020-08-07T21:00:00.000Z'),
+        // startDate: '2020-08-07T21:00:00.000Z',
+        startBalance: 10000,
         payoffInterval: null,
         payoffStep: 0,
         endDateOffset: 270,
         endDateOffsetInterval: 'day',
-        syncids: ['0042']
+        syncids: ['42305810330000000042']
       }
     ]
   ])('converts Deposit', (rawTransaction, transaction) => {
@@ -84,7 +86,7 @@ describe('convertDeposit', () => {
         balance: 0,
         percentPaidPeriod: 'Ежеквартально',
         duration: null,
-        open_date: '13.03.2014',
+        open_date: '03.13.2014', // была дата '13.03.2014'. Переделать надо
         end_date: null,
         early_close: true,
         rate: 0.01,
@@ -126,12 +128,14 @@ describe('convertDeposit', () => {
         balance: 0,
         capitalization: false,
         percent: 0.01,
-        startDate: '13.03.2014',
+        startDate: new Date('2014-03-12T20:00:00.000Z'),
+        // startDate: '13.03.2014',
+        startBalance: 0,
         payoffInterval: null,
         payoffStep: 0,
         endDateOffset: 0,
         endDateOffsetInterval: 'day',
-        syncids: ['4241']
+        syncids: ['42301810339901654241']
       }
     ]
   ])('converts Deposit Credit', (rawTransaction, transaction) => {

@@ -45,7 +45,7 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: '2020-08-09T17:55:44+05:00',
+        date: new Date('2020-08-09T12:55:44.000Z'),
         hold: true,
         comment: null,
         merchant: {
@@ -167,7 +167,7 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: '2020-07-21T22:17:05+05:00',
+        date: new Date('2020-07-21T17:17:05.000Z'),
         hold: false,
         comment: null,
         merchant: {

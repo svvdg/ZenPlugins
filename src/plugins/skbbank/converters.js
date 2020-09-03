@@ -95,8 +95,8 @@ export function convertLoan (rawTransaction) {
     balance: -rawTransaction.amount,
     capitalization: rawTransaction.capitalization || true,
     percent: rawTransaction.interestRate,
-    startDate: new Date(rawTransaction.openDate), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
-    endDate: new Date(rawTransaction.endDate), // const { interval, count } = getIntervalBetweenDates(startDate, endDate),
+    startDate: new Date(parseDate(rawTransaction.openDate)),
+    endDate: new Date(parseDate(rawTransaction.endDate)), // const { interval, count } = getIntervalBetweenDates(startDate, endDate),
     endDateOffsetInterval: 'day',
     // payoffInterval: payoffInterval,
     // payoffStep: payoffStep,
@@ -125,7 +125,7 @@ export function convertTransaction (accounts, rawTransaction) { // Не надо
   }
 
   const transaction = {
-    date: rawTransaction.view.dateCreated,
+    date: new Date(rawTransaction.view.dateCreated),
     hold: rawTransaction.view.state !== 'processed',
     merchant: {
       country: null,
@@ -196,12 +196,14 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
 }
 
 function parseDate (stringDate) {
-  const pattern = /(\d{2}).(\d{2}).(\d{4})/
-  const arrayDate = stringDate.match(pattern)
-  const newDate = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1])
-  return newDate
+  const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
+  return new Date(date[3], date[2] - 1, date[1])
 }
-
+/*
+function parseInterval (stringDate) {
+  const { interval, count } = getIntervalBetweenDates(startDate, endDate)
+  return { interval, count }
+}
 /*
 var pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
 var arrayDate = stringDate.match(pattern);

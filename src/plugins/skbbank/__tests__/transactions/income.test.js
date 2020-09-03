@@ -50,7 +50,7 @@ describe('convertTransaction', () => {
           }
       },
       {
-        date: '2020-07-13T05:47:02+05:00',
+        date: new Date('2020-07-13T05:47:02+05:00'),
         hold: false,
         comment: null,
         merchant: {

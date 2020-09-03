@@ -149,7 +149,7 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: '2020-08-09T19:23:32+05:00',
+        date: new Date('2020-08-09T14:23:32.000Z'),
         hold: false,
         comment: 'На "Счет Mastercard Unembossed"',
         merchant: {
@@ -271,7 +271,7 @@ describe('convertTransaction', () => {
         }
       },
       {
-        date: '2020-08-07T16:16:16+05:00',
+        date: new Date('2020-08-07T11:16:16.000Z'),
         hold: false,
         comment: 'На "Исполнение желаний + (срочный вклад)"',
         merchant: {

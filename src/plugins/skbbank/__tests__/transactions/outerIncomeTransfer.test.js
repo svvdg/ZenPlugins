@@ -50,7 +50,7 @@ describe('convertTransaction', () => {
           }
       },
       {
-        date: '2020-08-20T11:08:36+05:00',
+        date: new Date('2020-08-20T06:08:36.000Z'),
         hold: false,
         comment: 'Перевод с использованием Системы быстрых платежей',
         merchant: {
@@ -132,7 +132,7 @@ describe('convertTransaction', () => {
           }
       },
       {
-        date: '2020-08-22T17:23:49+05:00',
+        date: new Date('2020-08-22T12:23:49.000Z'),
         hold: false,
         comment: 'С карты ***4617',
         merchant: {

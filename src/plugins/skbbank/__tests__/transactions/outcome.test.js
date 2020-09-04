@@ -171,8 +171,8 @@ describe('convertTransaction', () => {
         hold: false,
         comment: null,
         merchant: {
-          country: null,
-          city: null,
+          country: 'BLR',
+          city: 'VITEBSK',
           title: 'RESTORAN "VASILKI"',
           mcc: 5812,
           location: null

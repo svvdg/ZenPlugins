@@ -1,3 +1,4 @@
+/*
 import { convertTransaction } from '../../converters'
 
 describe('convertTransaction', () => {
@@ -167,3 +168,5 @@ describe('convertTransaction', () => {
     expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
   })
 })
+
+ */

@@ -131,8 +131,8 @@ export function convertTransaction (accounts, rawTransaction) {
     date: new Date(rawTransaction.view.dateCreated),
     hold: rawTransaction.view.state !== 'processed',
     merchant: {
-      country: null,
-      city: null,
+      country: invoice.instrument === accounts.instrument ? null : rawTransaction.details.purpose.slice(-3),
+      city: invoice.instrument === accounts.instrument ? null : rawTransaction.details.terminal.city,
       title: rawTransaction.view.descriptions.operationDescription || rawTransaction.view.mainRequisite,
       mcc: null,
       location: null

@@ -162,7 +162,10 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '900000001',
-            account: { id: 'account' },
+            account: {
+              id: 'account',
+              syncIds: ['40817810700012345678']
+            },
             invoice: null,
             sum: 1000,
             fee: 0
@@ -172,7 +175,7 @@ describe('convertTransaction', () => {
             account: {
               type: null,
               instrument: 'RUB',
-              syncIds: ['40817810900016392697'],
+              syncIds: ['40817810900087654321'],
               company: null
             },
             invoice: null,
@@ -284,7 +287,10 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '850999999',
-            account: { id: 'account' },
+            account: {
+              id: 'account',
+              syncIds: ['42305810330000000042']
+            },
             invoice: null,
             sum: 10000,
             fee: 0

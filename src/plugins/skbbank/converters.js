@@ -167,7 +167,7 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
     /p2p/i,
     /sbp_in/i,
     /transfer-own/i,
-    /transfer_rub/i
+    /transfer_rub/i // ???
   ]) {
     const match = rawTransaction.info.subType.match(pattern)
     if (match) {

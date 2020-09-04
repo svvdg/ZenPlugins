@@ -33,7 +33,6 @@ export function convertCard (rawTransaction) {
 export function convertDeposit (rawTransaction) {
   let payoffInterval = {}
   for (const pattern of [
-    // /Отправка денежного/i,
     /В конце срока/i,
     /Ежеквартально/i
   ]) {
@@ -63,7 +62,7 @@ export function convertDeposit (rawTransaction) {
     balance: rawTransaction.balance,
     capitalization: rawTransaction.capitalization,
     percent: rawTransaction.rate,
-    startDate: new Date(parseDate(rawTransaction.open_date)), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо
+    startDate: new Date(parseDate(rawTransaction.open_date)),
     startBalance: rawTransaction.opening_balance,
     endDateOffset: Number(rawTransaction.duration),
     endDateOffsetInterval: 'day',
@@ -113,7 +112,11 @@ function findAccountByStoredId (accounts, storedId) {
   console.assert(false, 'cannot find storedId ' + storedId)
 }
 
-export function convertTransaction (accounts, rawTransaction) { // Не надо обрабатывать:      view.state: 'rejected'      info.subType: 'loan-repayment',
+export function convertTransaction (accounts, rawTransaction) {
+  if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
+    return null
+  }
+
   const invoice = {
     sum: rawTransaction.view.direction === 'debit' ? -rawTransaction.view.amounts.amount : rawTransaction.view.amounts.amount,
     instrument: rawTransaction.view.amounts.currency
@@ -153,17 +156,13 @@ export function convertTransaction (accounts, rawTransaction) { // Не надо
     }
   };
   [
-    // parseTitle,
     parseTransferAccountTransaction
-    // parseTransferTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice))
 
   return transaction
 }
 
 function parseTransferAccountTransaction (rawTransaction, transaction, invoice) {
-  // if (rawTransaction.info.subType === 'p2p') {
-  // console.log('ПРошел')
   for (const pattern of [
     /p2p/i,
     /sbp_in/i,
@@ -181,7 +180,6 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
             instrument: invoice.instrument,
             syncIds: [
               rawTransaction.view.productAccount
-              // rawTransaction.view.mainRequisite.match('С карты (\\d+)')
             ],
             company: null
           },
@@ -189,6 +187,12 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
           sum: -invoice.sum,
           fee: 0
         })
+      if (rawTransaction.info.subType === 'p2p') {
+        const card = rawTransaction.view.mainRequisite.match('С карты \\*+(\\d{4})$')
+        transaction.comment = rawTransaction.view.descriptions.operationDescription
+        transaction.merchant.title = rawTransaction.view.mainRequisite
+        transaction.movements[1].account.syncIds = [card[1]]
+      }
       return true
     }
   }
@@ -199,18 +203,66 @@ function parseDate (stringDate) {
   const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
   return new Date(date[3], date[2] - 1, date[1])
 }
+
+/*
+const moment = require("moment");
+const getDatesDiff = (start_date, end_date, date_format = "YYYY-MM-DD") => {
+  const getDateAsArray = date => {
+    return moment(date.split(/\D+/), date_format);
+  };
+  const diff = getDateAsArray(end_date).diff(getDateAsArray(start_date), "days") + 1;
+  const dates = [];
+  for (let i = 0; i < diff; i++) {
+    const nextDate = getDateAsArray(start_date).add(i, "day");
+    const isWeekEndDay = nextDate.isoWeekday() > 5;
+    if (!isWeekEndDay)
+      dates.push(nextDate.format(date_format))
+  }
+  return dates;
+};
+
+Use:
+
+  const date_log = getDaysDiff ('2019-10-17',  '2019-10-25');
+console.log(date_log);
+output:
+
+  date_log =
+    [ '2019-10-17',
+      '2019-10-18',
+      '2019-10-21',
+      '2019-10-22',
+      '2019-10-23',
+      '2019-10-24',
+      '2019-10-25'
+    ]
+/*
+var getDates = function(startDate, endDate) {
+  var dates = [],
+    currentDate = startDate,
+    addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    };
+  while (currentDate <= endDate) {
+    dates.push(currentDate);
+    currentDate = addDays.call(currentDate, 1);
+  }
+  return dates;
+};
+
+// Usage
+var dates = getDates(new Date(2013,10,22), new Date(2013,11,25));
+dates.forEach(function(date) {
+  console.log(date);
+});
 /*
 function parseInterval (stringDate) {
   const { interval, count } = getIntervalBetweenDates(startDate, endDate)
   return { interval, count }
 }
-/*
-var pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-var arrayDate = stringDate.match(pattern);
-var dt = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1]);
 
-var pattern = /(\d{2})\.(\d{2})\.(\d{4})/;
-var dt = new Date(st.replace(pattern,'--'));
 /*
 function parseTransferTransaction (rawTransaction, transaction, invoice) {
   if (rawTransaction.view.direction === 'credit') {

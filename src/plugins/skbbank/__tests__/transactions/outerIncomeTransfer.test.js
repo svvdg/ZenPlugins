@@ -134,11 +134,11 @@ describe('convertTransaction', () => {
       {
         date: new Date('2020-08-22T12:23:49.000Z'),
         hold: false,
-        comment: 'С карты ***4617',
+        comment: 'В "СКБ-Банк" на карту ***6004',
         merchant: {
           country: null,
           city: null,
-          title: 'В "СКБ-Банк" на карту ***6004',
+          title: 'С карты ***4617',
           mcc: null,
           location: null
         },
@@ -155,7 +155,7 @@ describe('convertTransaction', () => {
             account: {
               type: null,
               instrument: 'RUB',
-              syncIds: [null],
+              syncIds: ['4617'],
               company: null
             },
             invoice: null,

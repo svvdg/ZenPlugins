@@ -276,7 +276,7 @@ describe('convertTransaction', () => {
       {
         date: new Date('2020-08-07T11:16:16.000Z'),
         hold: false,
-        comment: 'На "Исполнение желаний + (срочный вклад)"',
+        comment: 'Перевод между счетами через систему ДБО',
         merchant: {
           country: null,
           city: null,

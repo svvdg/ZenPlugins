@@ -17,7 +17,7 @@ describe('convertLoan', () => {
         contractDate: '13.03.2014',
         contractNumber: '39913394134',
         openDate: '13.03.2014',
-        endDate: '13.11.2023', // const { interval, count } = getIntervalBetweenDates(startDate, endDate),
+        endDate: '13.11.2023',
         allowPaymentAmount: 20878.61,
         partialPaymentDate: '14.09.2020',
         planPaymentAmount: 5900,
@@ -60,9 +60,7 @@ describe('convertLoan', () => {
         capitalization: true,
         percent: 26.9,
         startDate: new Date('2014-03-12T20:00:00.000Z'),
-        // payoffInterval: null,
-        // payoffStep: 0,
-        endDate: new Date('2023-11-12T21:00:00.000Z'), // была дата '03.13.2014' надо '13.03.2014'. Переделать надо'13.11.2023',
+        endDateOffset: 3532, // ???
         endDateOffsetInterval: 'day',
         syncids: ['40817810239923082636']
       }

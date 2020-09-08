@@ -60,8 +60,8 @@ describe('convertLoan', () => {
         capitalization: true,
         percent: 26.9,
         startDate: new Date('2014-03-12T20:00:00.000Z'),
-        endDateOffset: 3532, // ???
-        endDateOffsetInterval: 'day',
+        endDateOffset: 116, // ???
+        endDateOffsetInterval: 'month',
         syncids: ['40817810239923082636']
       }
     ]

@@ -151,11 +151,11 @@ describe('convertTransaction', () => {
       {
         date: new Date('2020-08-09T14:23:32.000Z'),
         hold: false,
-        comment: 'На "Счет Mastercard Unembossed"',
+        comment: 'Между счетами',
         merchant: {
           country: null,
           city: null,
-          title: 'Между счетами',
+          title: 'Иванов Иван Иванович',
           mcc: null,
           location: null
         },

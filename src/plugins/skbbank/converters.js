@@ -77,8 +77,7 @@ export function convertDeposit (rawTransaction) {
 export function convertLoan (rawTransaction) {
   const fromDate = new Date(parseDate(rawTransaction.openDate))
   const toDate = new Date(parseDate(rawTransaction.endDate))
-  const intervals = 'day'
-  const { interval, count } = getIntervalBetweenDates(fromDate, toDate, intervals)
+  const { interval, count } = getIntervalBetweenDates(fromDate, toDate)
   /*
   const payoffInterval = {
     'В конце срока': null
@@ -102,7 +101,7 @@ export function convertLoan (rawTransaction) {
     percent: rawTransaction.interestRate,
     startDate: fromDate,
     endDateOffset: count,
-    endDateOffsetInterval: interval + 'ay',
+    endDateOffsetInterval: interval,
     syncids: [rawTransaction.repaymentAccount]
   }
 }
@@ -171,7 +170,7 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
     /p2p/i,
     /sbp_in/i,
     /transfer-own/i,
-    /transfer_rub/i // ???
+    /transfer_rub/i
   ]) {
     const match = rawTransaction.info.subType.match(pattern)
     if (match) {
@@ -197,9 +196,14 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
         transaction.merchant.title = rawTransaction.view.mainRequisite
         transaction.movements[1].account.syncIds = [card[1]]
       } else if (rawTransaction.info.subType === 'transfer-own' && rawTransaction.view.direction === 'internal') {
-        transaction.comment = rawTransaction.view.details.comment || rawTransaction.view.mainRequisite
-        // transaction.merchant.title = rawTransaction.view.mainRequisite
+        transaction.comment = rawTransaction.details.comment || rawTransaction.view.mainRequisite
+        // transaction.merchant.title = rawTransaction.view.mainRequisite ???????
         transaction.movements[0].account.syncIds = [rawTransaction.details.payeeAccount]
+      } else if (rawTransaction.info.subType === 'transfer_rub' && rawTransaction.view.direction === 'internal') {
+        transaction.comment = rawTransaction.view.descriptions.operationDescription || rawTransaction.view.mainRequisite
+        transaction.merchant.title = rawTransaction.details['payee-name']
+        transaction.movements[0].account.syncIds = [rawTransaction.details['payee-account']]
+        transaction.movements[1].account.syncIds = [rawTransaction.details['payer-account']]
       }
 
       return true

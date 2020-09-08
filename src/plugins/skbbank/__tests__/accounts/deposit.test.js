@@ -63,7 +63,7 @@ describe('convertDeposit', () => {
         payoffStep: 0,
         endDateOffset: 270,
         endDateOffsetInterval: 'day',
-        syncids: ['42305810330000000042']
+        syncIds: ['42305810330000000042']
       }
     ]
   ])('converts Deposit', (rawTransaction, transaction) => {
@@ -133,7 +133,7 @@ describe('convertDeposit', () => {
         payoffStep: 0,
         endDateOffset: 0,
         endDateOffsetInterval: 'day',
-        syncids: ['42301810339901654241']
+        syncIds: ['42301810339901654241']
       }
     ]
   ])('converts Deposit Credit', (rawTransaction, transaction) => {

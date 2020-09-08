@@ -11,7 +11,7 @@ export function convertAccount (rawTransaction) {
     balance: rawTransaction.balance,
     instrument: rawTransaction.currency,
     creditLimit: 0,
-    syncids: [rawTransaction.number.slice(-4)]
+    syncIds: [rawTransaction.number.slice(-4)]
   }
 }
 
@@ -28,7 +28,7 @@ export function convertCard (rawTransaction) {
     instrument: rawTransaction.currency, // 'RUB'
     balance: rawTransaction.availableBalance, // <= json.balance
     creditLimit: 0,
-    syncids: [rawTransaction.pan]
+    syncIds: [rawTransaction.pan]
   }
 }
 
@@ -70,7 +70,7 @@ export function convertDeposit (rawTransaction) {
     endDateOffsetInterval: 'day',
     payoffInterval: payoffInterval,
     payoffStep: payoffStep,
-    syncids: [rawTransaction.account]
+    syncIds: [rawTransaction.account]
   }
 }
 
@@ -102,7 +102,7 @@ export function convertLoan (rawTransaction) {
     startDate: fromDate,
     endDateOffset: count,
     endDateOffsetInterval: interval,
-    syncids: [rawTransaction.repaymentAccount]
+    syncIds: [rawTransaction.repaymentAccount]
   }
 }
 

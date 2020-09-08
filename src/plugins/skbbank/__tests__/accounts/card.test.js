@@ -55,7 +55,7 @@ describe('convertCard', () => {
         balance: 12345.00,
         creditLimit: 0,
         storedId: '31072020',
-        syncids: [
+        syncIds: [
           '123456******7890'
         ]
       }

@@ -1,18 +1,20 @@
 import { getIntervalBetweenDates } from '../../common/momentDateUtils'
+// import { accountId } from './index'
 
 export function convertAccount (rawTransaction) {
   if (rawTransaction.type !== 'current') {
     return null
   }
-  return {
+  const account = {
     id: rawTransaction.number,
     type: 'checking',
     title: rawTransaction.name, // 'Счет RUB'
     balance: rawTransaction.balance,
     instrument: rawTransaction.currency,
     creditLimit: 0,
-    syncIds: [rawTransaction.number.slice(-4)]
+    syncIds: [rawTransaction.number] // .slice(-4) обрезать нужно???
   }
+  return account
 }
 
 export function convertCard (rawTransaction) {
@@ -20,7 +22,7 @@ export function convertCard (rawTransaction) {
     console.log('Unexpected category ' + rawTransaction.category)
     return null
   }
-  return {
+  const account = {
     id: rawTransaction.primaryAccount,
     storedId: rawTransaction.storedId.toString(), // На этот id приходят платежи при стягивании.
     type: 'ccard',
@@ -30,6 +32,7 @@ export function convertCard (rawTransaction) {
     creditLimit: 0,
     syncIds: [rawTransaction.pan]
   }
+  return account
 }
 
 export function convertDeposit (rawTransaction) {
@@ -56,7 +59,7 @@ export function convertDeposit (rawTransaction) {
   if (payoffInterval === null) {
     payoffStep = 0
   }
-  return {
+  const account = {
     id: rawTransaction.account,
     type: 'deposit',
     title: rawTransaction.name,
@@ -72,6 +75,7 @@ export function convertDeposit (rawTransaction) {
     payoffStep: payoffStep,
     syncIds: [rawTransaction.account]
   }
+  return account
 }
 
 export function convertLoan (rawTransaction) {
@@ -91,7 +95,7 @@ export function convertLoan (rawTransaction) {
     payoffStep = 0
   }
   */
-  return {
+  const account = {
     id: rawTransaction.repaymentAccount,
     type: 'loan',
     title: rawTransaction.name,
@@ -104,6 +108,17 @@ export function convertLoan (rawTransaction) {
     endDateOffsetInterval: interval,
     syncIds: [rawTransaction.repaymentAccount]
   }
+  return account
+}
+
+export function findId (rawTransaction, accounts) {
+  const accountId = {
+    [accounts.syncIds]: {
+      id: accounts.id
+    }
+  }
+  console.log(accountId) // ???
+  return accountId
 }
 
 function findAccountByStoredId (accounts, storedId) {

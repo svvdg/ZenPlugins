@@ -62,9 +62,7 @@ describe('convertAccount', () => {
         instrument: 'RUB',
         balance: 1000.00,
         creditLimit: 0,
-        syncIds: [
-          '4321'
-        ]
+        syncIds: ['40817810900087654321']
       }
     ]
   ])('converts Account', (rawTransaction, transaction) => {
@@ -135,9 +133,7 @@ describe('convertAccount', () => {
         instrument: 'RUB',
         balance: 0,
         creditLimit: 0,
-        syncIds: [
-          '2636'
-        ]
+        syncIds: ['40817810239923082636']
       }
     ]
   ])('converts Account Credit', (rawTransaction, transaction) => {

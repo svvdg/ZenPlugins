@@ -101,7 +101,8 @@ export async function fetchProducts () {
   return {
     cards: productsResp.body.cards,
     accounts: productsResp.body.accounts,
-    deposits: productsResp.body.deposits
+    deposits: productsResp.body.deposits,
+    loans: productsResp.body.loans
   }
 }
 

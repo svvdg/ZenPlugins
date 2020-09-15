@@ -123,8 +123,9 @@ export function convertLoan (rawTransaction) {
 }
 
 export function findId (rawTransaction, accounts) {
-  const accountId = {
-    [accounts.syncIds]: {
+  const accountId = {}
+  for (let i = 0; i < accounts.syncIds.length; i++) {
+    accountId[accounts.syncIds[i]] = {
       id: accounts.id
     }
   }

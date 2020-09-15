@@ -13,9 +13,7 @@ describe('convertFindId', () => {
         syncIds: ['40817810900087654321']
       },
       {
-        '40817810900087654321': {
-          id: '40817810900087654321'
-        }
+        '40817810900087654321': { id: '40817810900087654321' }
       }
     ]
   ])('converts findId Account', (rawTransaction, transaction) => {
@@ -36,12 +34,11 @@ describe('convertFindId', () => {
         startDate: new Date('2014-03-12T20:00:00.000Z'),
         endDateOffset: 116, // ???
         endDateOffsetInterval: 'month',
-        syncIds: ['40817810239923082636'] // mainAccount: '45507810939900624978',
+        syncIds: ['40817810239923082636', '45507810939900624978'] // mainAccount: '45507810939900624978',
       },
       {
-        '40817810239923082636': { // или 45507810939900624978 ???
-          id: '40817810239923082636'
-        }
+        '40817810239923082636': { id: '40817810239923082636' },
+        '45507810939900624978': { id: '40817810239923082636' }
       }
     ]
   ])('converts findId Loan', (rawTransaction, transaction) => {
@@ -56,15 +53,17 @@ describe('convertFindId', () => {
         type: 'ccard',
         title: 'Mastercard Unembossed',
         instrument: 'RUB',
-        balance: 12345.00,
+        balance: 7302.49,
         creditLimit: 0,
         storedId: '31072020',
-        syncIds: ['123456******7890']
+        syncIds: [
+          '123456******7890',
+          '170537804'
+        ]
       },
       {
-        '123456******7890': {
-          id: '40817810700012345678'
-        }
+        '123456******7890': { id: '40817810700012345678' },
+        170537804: { id: '40817810700012345678' }
       }
     ]
   ])('converts findId Ccard', (rawTransaction, transaction) => {

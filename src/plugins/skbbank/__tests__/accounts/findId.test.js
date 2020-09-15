@@ -4,6 +4,28 @@ describe('convertFindId', () => {
   it.each([
     [
       {
+        id: '40817810900087654321',
+        type: 'checking',
+        title: 'Счет RUB',
+        instrument: 'RUB',
+        balance: 1000.00,
+        creditLimit: 0,
+        syncIds: ['40817810900087654321']
+      },
+      {
+        '40817810900087654321': {
+          id: '40817810900087654321'
+        }
+      }
+    ]
+  ])('converts findId Account', (rawTransaction, transaction) => {
+    const accounts = { id: 'account1', syncIds: ['syncIds1'] }
+    expect(findId(accounts, rawTransaction)).toEqual(transaction)
+  })
+
+  it.each([
+    [
+      {
         id: '40817810239923082636', // или 45507810939900624978 ???
         type: 'loan',
         title: 'ПЕРСОНАЛЬНОЕ ПРЕДЛОЖЕНИЕ (потребительский кредит)',

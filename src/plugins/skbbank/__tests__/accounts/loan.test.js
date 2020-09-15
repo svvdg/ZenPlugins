@@ -52,7 +52,8 @@ describe('convertLoan', () => {
         minLimit: null
       },
       {
-        id: '40817810239923082636', // или 45507810939900624978 ???
+        id: '40817810239923082636',
+        mainAccount: '45507810939900624978',
         type: 'loan',
         title: 'ПЕРСОНАЛЬНОЕ ПРЕДЛОЖЕНИЕ (потребительский кредит)',
         instrument: 'RUB',
@@ -62,7 +63,10 @@ describe('convertLoan', () => {
         startDate: new Date('2014-03-12T20:00:00.000Z'),
         endDateOffset: 116, // ???
         endDateOffsetInterval: 'month',
-        syncIds: ['40817810239923082636']
+        syncIds: [
+          '45507810939900624978',
+          '40817810239923082636'
+        ]
       }
     ]
   ])('converts Loan', (rawTransaction, transaction) => {

@@ -139,4 +139,79 @@ describe('convertAccount', () => {
   ])('converts Account Credit', (rawTransaction, transaction) => {
     expect(convertAccount(rawTransaction)).toEqual(transaction)
   })
+
+  it.each([
+    [
+      {
+        id: 170522760,
+        customName: false,
+        name: 'Счет Mastercard Unembossed',
+        productName: 'Счет Mastercard Unembossed',
+        number: '40817810239923082636',
+        state: 'Открыт',
+        stateCode: 'open',
+        amount: 7302.49,
+        type: 'card',
+        registryAmount: 0,
+        registry2Amount: 0,
+        balance: 36063.61,
+        currency: 'RUB',
+        availableBalance: 7302.49,
+        availBalanceRub: 7302.49,
+        startDate: '11.05.2019',
+        order: 1,
+        category: 'account',
+        requisites:
+          {
+            bankName: 'ФИЛИАЛ "ВОЛЖСКИЙ" ПАО "СКБ-БАНК"',
+            address: 'Россия, 400066, Волгоградская обл, Волгоград г, Коммунистическая ул, д.16',
+            bic: '041856890',
+            inn: '6608003052',
+            kpp: '343503001',
+            corrAccount: '30101810800000000890'
+          },
+        allowInPayments: true,
+        allowOutPayments: true,
+        allowLoanRepayment: true,
+        tariffPlanName: 'Универсальный',
+        tariffPlanCode: '',
+        tariffPlanLinkToRules: '',
+        specType: 'EX',
+        mostActive: false,
+        pdfLink: '/export/account/pdf?id=170522760',
+        overdraft: false,
+        sbpDefault: false,
+        bonusProgramState: 'enabled',
+        availableBonuses: 297.36,
+        accruedBonuses: 425.22,
+        nextAccrualDate: '2020-09-01',
+        lockedAmount: 0,
+        canClose: true,
+        bonusProgramGroup:
+          {
+            firstCategory: '3',
+            secondCategory: '3',
+            thirdCategory: '3',
+            selectCategoryDate: '2020-07-06T13:03:43.000+0500'
+          },
+        petitionId: null,
+        tariffPlanCanChange: false,
+        cards: [170537804]
+      },
+      {
+        id: '40817810239923082636',
+        type: 'checking',
+        title: 'Счет Mastercard Unembossed', // или 'Счет RUB' ???
+        instrument: 'RUB',
+        balance: 36063.61,
+        creditLimit: 0,
+        syncIds: [
+          '40817810239923082636',
+          '170537804'
+        ]
+      }
+    ]
+  ])('converts Account Card', (rawTransaction, transaction) => {
+    expect(convertAccount(rawTransaction)).toEqual(transaction)
+  })
 })

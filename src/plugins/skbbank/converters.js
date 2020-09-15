@@ -2,7 +2,7 @@ import { getIntervalBetweenDates } from '../../common/momentDateUtils'
 // import { accountId } from './index'
 
 export function convertAccount (rawTransaction) {
-  if (rawTransaction.type !== 'current') {
+  if (rawTransaction.type !== 'current' && rawTransaction.category !== 'account') {
     return null
   }
   const account = {
@@ -13,6 +13,10 @@ export function convertAccount (rawTransaction) {
     instrument: rawTransaction.currency,
     creditLimit: 0,
     syncIds: [rawTransaction.number] // .slice(-4) обрезать нужно???
+  }
+  if (rawTransaction.type === 'card') {
+    // account.title = 'Счет ' + rawTransaction.currency // 'Счет RUB'
+    account.syncIds.push(rawTransaction.cards.toString())
   }
   return account
 }
@@ -30,7 +34,10 @@ export function convertCard (rawTransaction) {
     instrument: rawTransaction.currency, // 'RUB'
     balance: rawTransaction.availableBalance, // <= json.balance
     creditLimit: 0,
-    syncIds: [rawTransaction.pan]
+    syncIds: [
+      rawTransaction.pan,
+      rawTransaction.storedId.toString()
+    ]
   }
   return account
 }
@@ -97,6 +104,7 @@ export function convertLoan (rawTransaction) {
   */
   const account = {
     id: rawTransaction.repaymentAccount,
+    mainAccount: rawTransaction.mainAccount,
     type: 'loan',
     title: rawTransaction.name,
     instrument: rawTransaction.currency,
@@ -106,7 +114,10 @@ export function convertLoan (rawTransaction) {
     startDate: fromDate,
     endDateOffset: count,
     endDateOffsetInterval: interval,
-    syncIds: [rawTransaction.repaymentAccount]
+    syncIds: [
+      rawTransaction.mainAccount,
+      rawTransaction.repaymentAccount
+    ]
   }
   return account
 }
@@ -117,7 +128,7 @@ export function findId (rawTransaction, accounts) {
       id: accounts.id
     }
   }
-  console.log(accountId) // ???
+  // console.log(accountId) // ???
   return accountId
 }
 
@@ -130,7 +141,7 @@ function findAccountByStoredId (accounts, storedId) {
   console.assert(false, 'cannot find storedId ' + storedId)
 }
 
-export function convertTransaction (accounts, rawTransaction) {
+export function convertTransaction (accounts, rawTransaction, accountIds) {
   if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
     return null
   }
@@ -175,12 +186,13 @@ export function convertTransaction (accounts, rawTransaction) {
   };
   [
     parseTransferAccountTransaction
+    // parseTransferInnerTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice))
 
   return transaction
 }
 
-function parseTransferAccountTransaction (rawTransaction, transaction, invoice) {
+function parseTransferAccountTransaction (rawTransaction, transaction, invoice, accountIds) {
   for (const pattern of [
     /p2p/i,
     /sbp_in/i,
@@ -220,7 +232,6 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice) 
         transaction.movements[0].account.syncIds = [rawTransaction.details['payee-account']]
         transaction.movements[1].account.syncIds = [rawTransaction.details['payer-account']]
       }
-
       return true
     }
   }
@@ -231,66 +242,16 @@ function parseDate (stringDate) {
   const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
   return new Date(date[3], date[2] - 1, date[1])
 }
-
 /*
-const moment = require("moment");
-const getDatesDiff = (start_date, end_date, date_format = "YYYY-MM-DD") => {
-  const getDateAsArray = date => {
-    return moment(date.split(/\D+/), date_format);
-  };
-  const diff = getDateAsArray(end_date).diff(getDateAsArray(start_date), "days") + 1;
-  const dates = [];
-  for (let i = 0; i < diff; i++) {
-    const nextDate = getDateAsArray(start_date).add(i, "day");
-    const isWeekEndDay = nextDate.isoWeekday() > 5;
-    if (!isWeekEndDay)
-      dates.push(nextDate.format(date_format))
+function parseTransferInnerTransaction (rawTransaction, transaction, invoice, accountIds) {
+  if (accountIds.findIndex(transaction.movements[0].account.syncIds) !== -1 &&
+    accountIds.findIndex(transaction.movements[1].account.syncIds) !== -1) {
+    transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log(transaction.comment)
   }
-  return dates;
-};
-
-Use:
-
-  const date_log = getDaysDiff ('2019-10-17',  '2019-10-25');
-console.log(date_log);
-output:
-
-  date_log =
-    [ '2019-10-17',
-      '2019-10-18',
-      '2019-10-21',
-      '2019-10-22',
-      '2019-10-23',
-      '2019-10-24',
-      '2019-10-25'
-    ]
-
-/*
-var getDates = function(startDate, endDate) {
-  var dates = [],
-    currentDate = startDate,
-    addDays = function(days) {
-      var date = new Date(this.valueOf());
-      date.setDate(date.getDate() + days);
-      return date;
-    };
-  while (currentDate <= endDate) {
-    dates.push(currentDate);
-    currentDate = addDays.call(currentDate, 1);
-  }
-  return dates;
-};
-
-// Usage
-var dates = getDates(new Date(2013,10,22), new Date(2013,11,25));
-dates.forEach(function(date) {
-  console.log(date);
-});
-/*
-function parseInterval (stringDate) {
-  const { interval, count } = getIntervalBetweenDates(startDate, endDate)
-  return { interval, count }
+  return transaction.comment
 }
+*/
 
 /*
 function parseTransferTransaction (rawTransaction, transaction, invoice) {

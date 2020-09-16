@@ -132,7 +132,7 @@ export function findId (rawTransaction, accounts) {
   // console.log(accountId) // ???
   return accountId
 }
-
+/*
 function findAccountByStoredId (accounts, storedId) {
   for (const acc of accounts) {
     if (acc.storedId === storedId) {
@@ -141,6 +141,8 @@ function findAccountByStoredId (accounts, storedId) {
   }
   console.assert(false, 'cannot find storedId ' + storedId)
 }
+
+ */
 
 export function convertTransaction (accounts, rawTransaction, accountIds) {
   if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
@@ -151,11 +153,14 @@ export function convertTransaction (accounts, rawTransaction, accountIds) {
     sum: rawTransaction.view.direction === 'debit' ? -rawTransaction.view.amounts.amount : rawTransaction.view.amounts.amount,
     instrument: rawTransaction.view.amounts.currency
   }
+
+  /*
   // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
   let accountId = rawTransaction.view.productAccount || rawTransaction.view.productCardId
   if (!accountId && rawTransaction.info.operationType === 'payment') {
     accountId = findAccountByStoredId(accounts, rawTransaction.details['payee-card']).id
   }
+  */
 
   const transaction = {
     date: new Date(rawTransaction.view.dateCreated),
@@ -287,6 +292,17 @@ function parseTransferTransaction (rawTransaction, transaction, invoice) {
     }
   }
   return false
+}
+ */
+
+/*
+function findAccountByStoredId (accounts, storedId) {
+  for (const acc of accounts) {
+    if (acc.storedId === storedId) {
+      return acc
+    }
+  }
+  console.assert(false, 'cannot find storedId ' + storedId)
 }
 
 /*

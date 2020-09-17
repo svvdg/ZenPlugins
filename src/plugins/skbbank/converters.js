@@ -123,14 +123,18 @@ export function convertLoan (rawTransaction) {
 }
 
 export function findId (rawTransaction, accounts) {
-  const accountId = {}
-  for (let i = 0; i < accounts.syncIds.length; i++) {
-    accountId[accounts.syncIds[i]] = {
-      id: accounts.id
+  let accountsById = {}
+  for (let a = 0; a < accounts.length; a++) {
+    const accountId = {}
+    const account = accounts[a]
+    for (let i = 0; i < account.syncIds.length; i++) {
+      accountId[account.syncIds[i]] = {
+        id: account.id
+      }
     }
+    accountsById = Object.assign(accountsById, accountId)
   }
-  // console.log(accountId) // ???
-  return accountId
+  return accountsById
 }
 /*
 function findAccountByStoredId (accounts, storedId) {

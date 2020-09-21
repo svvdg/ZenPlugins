@@ -48,7 +48,7 @@ describe('convertTransaction', () => {
     ]
   ])('should convert Outer', (rawTransaction, transaction) => {
     const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
   })
 
   it.each([
@@ -98,6 +98,6 @@ describe('convertTransaction', () => {
     ]
   ])('should convert Outer', (rawTransaction, transaction) => {
     const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
   })
 })

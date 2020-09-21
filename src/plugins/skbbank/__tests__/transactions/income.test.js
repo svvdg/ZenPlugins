@@ -73,6 +73,6 @@ describe('convertTransaction', () => {
     ]
   ])('should convert income', (rawTransaction, transaction) => {
     const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
   })
 })

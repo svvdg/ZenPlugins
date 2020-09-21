@@ -68,7 +68,7 @@ describe('convertTransaction', () => {
     ]
   ])('should convert usual payment', (rawTransaction, transaction) => {
     const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
   })
 
   it.each([
@@ -193,7 +193,7 @@ describe('convertTransaction', () => {
     ]
   ])('should convert payment in foreign currency', (rawTransaction, transaction) => {
     const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(accounts, rawTransaction)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
   })
 })
 

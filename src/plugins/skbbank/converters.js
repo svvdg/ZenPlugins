@@ -21,6 +21,14 @@ export function convertAccount (rawTransaction) {
   return account
 }
 
+export function convertAccounts (apiAccounts) {
+  let accounts = apiAccounts.cards.map(convertCard).filter(x => !!x)
+  accounts = accounts.concat(apiAccounts.accounts.map(convertAccount).filter(x => !!x))
+  accounts = accounts.concat(apiAccounts.deposits.map(convertDeposit).filter(x => !!x))
+  accounts = accounts.concat(apiAccounts.loans.map(convertLoan).filter(x => !!x))
+  return accounts
+}
+
 export function convertCard (rawTransaction) {
   if (rawTransaction.category !== 'card') {
     console.log('Unexpected category ' + rawTransaction.category)
@@ -43,6 +51,10 @@ export function convertCard (rawTransaction) {
 }
 
 export function convertDeposit (rawTransaction) {
+  if (!rawTransaction.contract_number) {
+    return null
+  }
+
   let payoffInterval = {}
   for (const pattern of [
     /В конце срока/i,
@@ -86,6 +98,10 @@ export function convertDeposit (rawTransaction) {
 }
 
 export function convertLoan (rawTransaction) {
+  if (!rawTransaction.mainAccount) {
+    return null
+  }
+
   const fromDate = new Date(parseDate(rawTransaction.openDate))
   const toDate = new Date(parseDate(rawTransaction.endDate))
   const { interval, count } = getIntervalBetweenDates(fromDate, toDate)
@@ -122,7 +138,7 @@ export function convertLoan (rawTransaction) {
   return account
 }
 
-export function findId (rawTransaction, accounts) {
+export function findId (accounts) {
   let accountsById = {}
   for (let a = 0; a < accounts.length; a++) {
     const accountId = {}
@@ -148,7 +164,7 @@ function findAccountByStoredId (accounts, storedId) {
 
  */
 
-export function convertTransaction (accounts, rawTransaction, accountIds) {
+export function convertTransaction (rawTransaction, accounts, accountsById) {
   if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
     return null
   }
@@ -231,7 +247,8 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice, 
         const card = rawTransaction.view.mainRequisite.match('С карты \\*+(\\d{4})$')
         transaction.comment = rawTransaction.view.descriptions.operationDescription
         transaction.merchant.title = rawTransaction.view.mainRequisite
-        transaction.movements[1].account.syncIds = [card[1]]
+        transaction.movements[0].account.syncIds = [rawTransaction.details['payee-card'], rawTransaction.details['payee-card-mask-pan'].slice(-4)]
+        transaction.movements[1].account.syncIds = [rawTransaction.details['payer-card'], card[1]]
       } else if (rawTransaction.info.subType === 'transfer-own' && rawTransaction.view.direction === 'internal') {
         transaction.comment = rawTransaction.details.comment || rawTransaction.view.mainRequisite
         // transaction.merchant.title = rawTransaction.view.mainRequisite ???????

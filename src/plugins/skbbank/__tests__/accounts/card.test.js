@@ -25,7 +25,7 @@ describe('convertCard', () => {
         primary: true,
         cardId: '4136158',
         brand: 'Mastercard Unembossed',
-        storedId: 31072020,
+        storedId: 310720201,
         limits: [],
         status: '00',
         status_desc: 'Карта не блокирована',
@@ -66,10 +66,11 @@ describe('convertCard', () => {
         instrument: 'RUB',
         balance: 7302.49,
         creditLimit: 0,
-        storedId: '31072020',
+        storedId: '310720201',
         syncIds: [
+          '40817810700012345678',
           '123456******7890',
-          '31072020'
+          '310720201'
         ]
       }
     ]

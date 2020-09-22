@@ -1,22 +1,27 @@
 import { getIntervalBetweenDates } from '../../common/momentDateUtils'
-// import { accountId } from './index'
+// import { fetchProducts } from './api'
 
-export function convertAccount (rawTransaction) {
-  if (rawTransaction.type !== 'current' && rawTransaction.category !== 'account') {
+export function convertAccount (apiAccounts) {
+  if (apiAccounts.type !== 'current' && apiAccounts.category !== 'account') {
     return null
   }
   const account = {
-    id: rawTransaction.number,
+    id: apiAccounts.number,
     type: 'checking',
-    title: rawTransaction.name, // 'Счет RUB'
-    balance: rawTransaction.balance,
-    instrument: rawTransaction.currency,
+    title: apiAccounts.name, // 'Счет RUB'
+    balance: apiAccounts.balance,
+    instrument: apiAccounts.currency,
     creditLimit: 0,
-    syncIds: [rawTransaction.number] // .slice(-4) обрезать нужно???
+    syncIds: [apiAccounts.number] // .slice(-4) обрезать нужно???
   }
-  if (rawTransaction.type === 'card') {
+  if (apiAccounts.type === 'card') {
     // account.title = 'Счет ' + rawTransaction.currency // 'Счет RUB'
-    account.syncIds.push(rawTransaction.cards.toString())
+    account.storedId = apiAccounts.cards
+    // const syncIds = []
+    for (let i = 0; i < apiAccounts.cards.length; i++) {
+      account.syncIds.push(apiAccounts.cards[i].pan)
+    }
+    // account.syncIds.push(syncIds)
   }
   return account
 }
@@ -43,6 +48,7 @@ export function convertCard (rawTransaction) {
     balance: rawTransaction.availableBalance, // <= json.balance
     creditLimit: 0,
     syncIds: [
+      rawTransaction.primaryAccount,
       rawTransaction.pan,
       rawTransaction.storedId.toString()
     ]

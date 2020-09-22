@@ -59,7 +59,7 @@ describe('convertAccounts', () => {
               },
             petitionId: null,
             tariffPlanCanChange: false,
-            cards: [170537804]
+            cards: [170537804, 310720201]
           }],
         cards:
           [{
@@ -117,6 +117,62 @@ describe('convertAccounts', () => {
             canViewCvv2: false,
             smsService: false,
             canIssuePlastic: false
+          },
+          {
+            id: '4136158', // Типа вторая карта на один лицевой счет
+            state_description: 'Действующая',
+            blocked: false,
+            name: 'Mastercard Unembossed',
+            customName: false,
+            amount: 7302.49,
+            currency: 'RUB',
+            pan: '123456******7890',
+            cardholderName: '',
+            category: 'card',
+            expDate: '2023-10-31',
+            balance: 36063.61,
+            availableBalance: 7302.49,
+            holdAmount: 28761.12,
+            primaryAccount: '40817810000015511074',
+            accountId: 170522760,
+            tariffLink: 'https://www.skbbank.ru/chastnym-licam/karty/icard',
+            order: '1', // если это вторая карта, то тут 2  ???
+            primary: true, // если это вторая карта, или тут  false ???
+            cardId: '4136158',
+            brand: 'Mastercard Unembossed',
+            storedId: 310720201,
+            limits: [],
+            status: '00',
+            status_desc: 'Карта не блокирована',
+            state: '2',
+            kind: 'debit',
+            loan_funds: 0,
+            own_funds: 7302.49,
+            used_loan_funds: 0,
+            most_active: false,
+            smsPhone: '79033164152',
+            smsType: null,
+            packageCashBack: 'forbidden',
+            packageFreeCashOut: 'off',
+            packageServ: false,
+            paymentSystem: 'MC',
+            limit_set_available: false,
+            own_customer_card: true,
+            holder_name: 'Иванов Иван Иванович',
+            design_id: '23006',
+            design_front_url: '/export/card/design?code=23006&side=front',
+            design_back_url: '/export/card/design?code=23006&side=back',
+            textColor: 'white',
+            canUnlock: false,
+            canReissue: false,
+            canAddCard: false,
+            contactless: true,
+            smsNotify: 30,
+            highCashBack: 30,
+            freeWithdraw: 30,
+            canViewCvv2: false,
+            smsService: false,
+            canIssuePlastic: false
           }],
         loans: [],
         deposits: []
@@ -129,12 +185,12 @@ describe('convertAccounts', () => {
           instrument: 'RUB',
           balance: 7302.49,
           creditLimit: 0,
-          syncIds: [
+          syncIds: [ // Или как должно быть ???
             '40817810000015511074',
             '548386******6004',
-            '170537804'
+            '123456******7890'
           ],
-          storedId: '170537804'
+          storedId: [170537804, 310720201] // Или как должно быть ???
         }
       ]
     ]

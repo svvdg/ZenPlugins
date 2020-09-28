@@ -119,7 +119,7 @@ describe('convertAccounts', () => {
             canIssuePlastic: false
           },
           {
-            id: '4136158', // Типа вторая карта на один лицевой счет
+            id: '4136158', // Вторая карта на один лицевой счет. Как правильно жолжны быть заполнены поля ???
             state_description: 'Действующая',
             blocked: false,
             name: 'Mastercard Unembossed',
@@ -402,11 +402,11 @@ describe('convertAccount', () => {
         type: 'checking',
         title: 'Счет Mastercard Unembossed', // или 'Счет RUB' ???
         instrument: 'RUB',
-        balance: 36063.61,
+        balance: 7302.49,
         creditLimit: 0,
+        storedId: [170537804],
         syncIds: [
-          '40817810239923082636',
-          '170537804'
+          '40817810239923082636'
         ]
       }
     ]

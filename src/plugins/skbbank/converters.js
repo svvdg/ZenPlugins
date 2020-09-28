@@ -9,7 +9,7 @@ export function convertAccount (apiAccounts) {
     id: apiAccounts.number,
     type: 'checking',
     title: apiAccounts.name, // 'Счет RUB'
-    balance: apiAccounts.balance,
+    balance: apiAccounts.amount,
     instrument: apiAccounts.currency,
     creditLimit: 0,
     syncIds: [apiAccounts.number] // .slice(-4) обрезать нужно???
@@ -18,9 +18,9 @@ export function convertAccount (apiAccounts) {
     // account.title = 'Счет ' + rawTransaction.currency // 'Счет RUB'
     account.storedId = apiAccounts.cards
     // const syncIds = []
-    for (let i = 0; i < apiAccounts.cards.length; i++) {
-      account.syncIds.push(apiAccounts.cards[i].pan)
-    }
+    // for (let i = 0; i < apiAccounts.cards.length; i++) {
+    // account.syncIds.push(apiAccounts.cards[i].pan)
+    // }
     // account.syncIds.push(syncIds)
   }
   return account
@@ -49,8 +49,7 @@ export function convertCard (rawTransaction) {
     creditLimit: 0,
     syncIds: [
       rawTransaction.primaryAccount,
-      rawTransaction.pan,
-      rawTransaction.storedId.toString()
+      rawTransaction.pan
     ]
   }
   return account
@@ -147,12 +146,21 @@ export function convertLoan (rawTransaction) {
 export function findId (accounts) {
   let accountsById = {}
   for (let a = 0; a < accounts.length; a++) {
-    const accountId = {}
+    let accountId = {}
     const account = accounts[a]
     for (let i = 0; i < account.syncIds.length; i++) {
       accountId[account.syncIds[i]] = {
         id: account.id
       }
+    }
+    if (account.storedId) {
+      const accountStorId = {}
+      for (let b = 0; b < account.storedId.length; b++) {
+        accountStorId[account.storedId[b]] = {
+          id: account.id
+        }
+      }
+      accountId = Object.assign(accountId, accountStorId)
     }
     accountsById = Object.assign(accountsById, accountId)
   }

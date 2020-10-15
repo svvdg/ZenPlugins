@@ -1,146 +1,144 @@
 import { getIntervalBetweenDates } from '../../common/momentDateUtils'
 // import { fetchProducts } from './api'
 
-export function convertAccount (apiAccounts) {
-  if (apiAccounts.type !== 'current' && apiAccounts.category !== 'account') {
-    return null
-  }
-  const account = {
-    id: apiAccounts.number,
-    type: 'checking',
-    title: apiAccounts.name, // 'Счет RUB'
-    balance: apiAccounts.amount,
-    instrument: apiAccounts.currency,
-    creditLimit: 0,
-    syncIds: [apiAccounts.number] // .slice(-4) обрезать нужно???
-  }
-  if (apiAccounts.type === 'card') {
-    // account.title = 'Счет ' + rawTransaction.currency // 'Счет RUB'
-    account.storedId = apiAccounts.cards
-    // const syncIds = []
-    // for (let i = 0; i < apiAccounts.cards.length; i++) {
-    // account.syncIds.push(apiAccounts.cards[i].pan)
-    // }
-    // account.syncIds.push(syncIds)
-  }
-  return account
-}
-
 export function convertAccounts (apiAccounts) {
-  let accounts = apiAccounts.cards.map(convertCard).filter(x => !!x)
-  accounts = accounts.concat(apiAccounts.accounts.map(convertAccount).filter(x => !!x))
-  accounts = accounts.concat(apiAccounts.deposits.map(convertDeposit).filter(x => !!x))
-  accounts = accounts.concat(apiAccounts.loans.map(convertLoan).filter(x => !!x))
+  let accounts = convertAccountCard(apiAccounts)
+  let account = convertLoan(apiAccounts)
+  accounts = accounts.concat(account)
+  account = convertDeposit(apiAccounts)
+  accounts = accounts.concat(account)
+  // const accounts = apiAccounts.map(parseConvertAccount).filter(x => !!x)
+  // let accounts = apiAccounts.cards.map(convertCard).filter(x => !!x)
+  // accounts = accounts.concat(apiAccounts.accounts.map(convertAccount).filter(x => !!x))
+  // accounts = accounts.concat(apiAccounts.deposits.map(convertDeposit).filter(x => !!x))
+  // accounts = accounts.concat(apiAccounts.loans.map(convertLoan).filter(x => !!x))
+  // console.log(accounts)
   return accounts
 }
 
-export function convertCard (rawTransaction) {
-  if (rawTransaction.category !== 'card') {
-    console.log('Unexpected category ' + rawTransaction.category)
-    return null
-  }
-  const account = {
-    id: rawTransaction.primaryAccount,
-    storedId: rawTransaction.storedId.toString(), // На этот id приходят платежи при стягивании.
-    type: 'ccard',
-    title: rawTransaction.name, // 'Mastercard Unembossed'
-    instrument: rawTransaction.currency, // 'RUB'
-    balance: rawTransaction.availableBalance, // <= json.balance
-    creditLimit: 0,
-    syncIds: [
-      rawTransaction.primaryAccount,
-      rawTransaction.pan
-    ]
-  }
-  return account
-}
-
-export function convertDeposit (rawTransaction) {
-  if (!rawTransaction.contract_number) {
+function convertAccountCard (apiAccounts) {
+  if (!apiAccounts.accounts) {
     return null
   }
 
-  let payoffInterval = {}
-  for (const pattern of [
-    /В конце срока/i,
-    /Ежеквартально/i
-  ]) {
-    const match = rawTransaction.percentPaidPeriod.match(pattern)
-    if (match) {
-      payoffInterval = null
+  let accounts = []
+  for (let i = 0; i < apiAccounts.accounts.length; i++) {
+    const apiAccount = apiAccounts.accounts[i]
+    if (apiAccount.category !== 'account') {
+      return null
     }
+    if (apiAccount.allowLoanRepayment === false) {
+      continue
+    }
+
+    const account = {
+      id: apiAccount.number,
+      type: 'checking',
+      title: apiAccount.name,
+      balance: apiAccount.amount,
+      instrument: apiAccount.currency,
+      creditLimit: 0,
+      syncIds: [apiAccount.number]
+    }
+    if (apiAccount.type === 'card') {
+      account.type = 'ccard'
+      account.storedId = apiAccount.cards
+      for (let i = 0; i < apiAccounts.cards.length; i++) {
+        if (account.storedId[i] === apiAccounts.cards[i].storedId) {
+          account.syncIds.push(apiAccounts.cards[i].pan)
+        }
+      }
+    }
+    accounts = accounts.concat(account)
   }
-  /*
-  const payoffInterval = {
-    'В конце срока': null
-  }[rawTransaction.percentPaidPeriod]
-  */
-  if (payoffInterval === undefined) {
-    console.log('Unexpected percentPaidPeriod ' + rawTransaction.percentPaydPeriod)
-    return null
-  }
-  let payoffStep = 1
-  if (payoffInterval === null) {
-    payoffStep = 0
-  }
-  const account = {
-    id: rawTransaction.account,
-    type: 'deposit',
-    title: rawTransaction.name,
-    instrument: rawTransaction.currency,
-    balance: rawTransaction.balance,
-    capitalization: rawTransaction.capitalization,
-    percent: rawTransaction.rate,
-    startDate: new Date(parseDate(rawTransaction.open_date)),
-    startBalance: rawTransaction.opening_balance,
-    endDateOffset: Number(rawTransaction.duration),
-    endDateOffsetInterval: 'day',
-    payoffInterval: payoffInterval,
-    payoffStep: payoffStep,
-    syncIds: [rawTransaction.account]
-  }
-  return account
+  return accounts
 }
 
-export function convertLoan (rawTransaction) {
-  if (!rawTransaction.mainAccount) {
+function convertDeposit (apiAccounts) {
+  if (!apiAccounts.deposits) {
     return null
   }
 
-  const fromDate = new Date(parseDate(rawTransaction.openDate))
-  const toDate = new Date(parseDate(rawTransaction.endDate))
-  const { interval, count } = getIntervalBetweenDates(fromDate, toDate)
-  /*
-  const payoffInterval = {
-    'В конце срока': null
-  }[rawTransaction.percentPaidPeriod]
-  if (payoffInterval === undefined) {
-    console.log('Unexpected percentPaidPeriod ' + rawTransaction.percentPaydPeriod)
+  let accounts = []
+  for (let i = 0; i < apiAccounts.deposits.length; i++) {
+    const apiDeposit = apiAccounts.deposits[i]
+    if (!apiDeposit.contract_number) {
+      return null
+    }
+    let payoffInterval = {}
+    for (const pattern of [
+      /В конце срока/i,
+      /Ежеквартально/i
+    ]) {
+      const match = apiDeposit.percentPaidPeriod.match(pattern)
+      if (match) {
+        payoffInterval = null
+      }
+    }
+    if (payoffInterval === undefined) {
+      console.log('Unexpected percentPaidPeriod ' + apiDeposit.percentPaydPeriod)
+      return null
+    }
+    let payoffStep = 1
+    if (payoffInterval === null) {
+      payoffStep = 0
+    }
+    const account = {
+      id: apiDeposit.account,
+      type: 'deposit',
+      title: apiDeposit.name,
+      instrument: apiDeposit.currency,
+      balance: apiDeposit.balance,
+      capitalization: apiDeposit.capitalization,
+      percent: apiDeposit.rate,
+      startDate: new Date(parseDate(apiDeposit.open_date)),
+      startBalance: apiDeposit.opening_balance,
+      endDateOffset: Number(apiDeposit.duration),
+      endDateOffsetInterval: 'day',
+      payoffInterval: payoffInterval,
+      payoffStep: payoffStep,
+      syncIds: [apiDeposit.account]
+    }
+    accounts = accounts.concat(account)
+  }
+  return accounts
+}
+
+function convertLoan (apiAccounts) {
+  if (!apiAccounts.loans) {
     return null
   }
-  let payoffStep = 1
-  if (payoffInterval === null) {
-    payoffStep = 0
+
+  let accounts = []
+  for (let i = 0; i < apiAccounts.loans.length; i++) {
+    const apiLoan = apiAccounts.loans[i]
+    if (!apiLoan.mainAccount) {
+      return null
+    }
+
+    const fromDate = new Date(parseDate(apiLoan.openDate))
+    const toDate = new Date(parseDate(apiLoan.endDate))
+    const { interval, count } = getIntervalBetweenDates(fromDate, toDate)
+    const account = {
+      id: apiLoan.repaymentAccount,
+      mainAccount: apiLoan.mainAccount,
+      type: 'loan',
+      title: apiLoan.name,
+      instrument: apiLoan.currency,
+      balance: -apiLoan.amount,
+      capitalization: apiLoan.capitalization || true,
+      percent: apiLoan.interestRate,
+      startDate: fromDate,
+      endDateOffset: count,
+      endDateOffsetInterval: interval,
+      syncIds: [
+        apiLoan.mainAccount,
+        apiLoan.repaymentAccount
+      ]
+    }
+    accounts = accounts.concat(account)
   }
-  */
-  const account = {
-    id: rawTransaction.repaymentAccount,
-    mainAccount: rawTransaction.mainAccount,
-    type: 'loan',
-    title: rawTransaction.name,
-    instrument: rawTransaction.currency,
-    balance: -rawTransaction.amount,
-    capitalization: rawTransaction.capitalization || true,
-    percent: rawTransaction.interestRate,
-    startDate: fromDate,
-    endDateOffset: count,
-    endDateOffsetInterval: interval,
-    syncIds: [
-      rawTransaction.mainAccount,
-      rawTransaction.repaymentAccount
-    ]
-  }
-  return account
+  return accounts
 }
 
 export function findId (accounts) {
@@ -229,6 +227,8 @@ export function convertTransaction (rawTransaction, accounts, accountsById) {
     // parseTransferInnerTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice))
 
+  parseAccountIds(transaction, accountsById)
+
   return transaction
 }
 
@@ -236,10 +236,10 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice, 
   for (const pattern of [
     /p2p/i,
     /sbp_in/i,
-    /transfer-own/i,
-    /transfer_rub/i
+    /internal/i
+    // /transfer_rub/i
   ]) {
-    const match = rawTransaction.info.subType.match(pattern)
+    const match = rawTransaction.info.subType.match(pattern) || rawTransaction.view.direction.match(pattern)
     if (match) {
       transaction.comment = rawTransaction.view.comment || rawTransaction.view.mainRequisite
       transaction.movements.push(
@@ -283,17 +283,23 @@ function parseDate (stringDate) {
   const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
   return new Date(date[3], date[2] - 1, date[1])
 }
-/*
-function parseTransferInnerTransaction (rawTransaction, transaction, invoice, accountIds) {
-  if (accountIds.findIndex(transaction.movements[0].account.syncIds) !== -1 &&
-    accountIds.findIndex(transaction.movements[1].account.syncIds) !== -1) {
-    transaction.comment = 'internal' // ???? Что тут надо ???
-    console.log(transaction.comment)
-  }
-  return transaction.comment
-}
-*/
 
+function parseAccountIds (transaction, accountIds) {
+  if (transaction.movements[0].account.syncIds in accountIds === true &&
+    transaction.movements[1].account.syncIds in accountIds === true) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('internal')
+  } else if (transaction.movements[0].account.syncIds in accountIds === false ||
+    transaction.movements[1].account.syncIds in accountIds === false) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('income || outcome')
+  } else if (transaction.movements[0].account.syncIds in accountIds === false &&
+  transaction.movements[1].account.syncIds in accountIds === false) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('Ошибка - нет своего счета') // ???? Что тут надо ???
+  }
+  // return transaction.comment
+}
 /*
 function parseTransferTransaction (rawTransaction, transaction, invoice) {
   if (rawTransaction.view.direction === 'credit') {

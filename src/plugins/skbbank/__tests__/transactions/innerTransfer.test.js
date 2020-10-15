@@ -187,11 +187,11 @@ describe('convertTransaction', () => {
     ]
   ])('should convert transfer', (rawTransaction, transaction) => {
     const accounts = { id: 'account', instrument: 'RUB' }
-    const accountIds = {
+    const accountsById = {
       '40817810700012345678': { id: '40817810700012345678' },
       '40817810900087654321': { id: '40817810900087654321' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountIds)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
   })
 
   it.each([
@@ -316,7 +316,11 @@ describe('convertTransaction', () => {
     ]
   ])('should convert account transaction', (rawTransaction, transaction) => {
     const accounts = { id: 'account', instrument: 'RUB' }
-    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
+    const accountsById = {
+      '42305810330000000042': { id: '42305810330000000042' },
+      '40817810700012345678': { id: '40817810700012345678' }
+    }
+    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
   })
 })
 

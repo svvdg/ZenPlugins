@@ -24,7 +24,7 @@ function convertAccountCard (apiAccounts) {
   let accounts = []
   for (let i = 0; i < apiAccounts.accounts.length; i++) {
     const apiAccount = apiAccounts.accounts[i]
-    if (apiAccount.category !== 'account') { // apiAccounts.accounts.type !== 'current' &&
+    if (apiAccount.category !== 'account') {
       return null
     }
     if (apiAccount.allowLoanRepayment === false) {
@@ -34,14 +34,13 @@ function convertAccountCard (apiAccounts) {
     const account = {
       id: apiAccount.number,
       type: 'checking',
-      title: apiAccount.name, // 'Счет RUB'
+      title: apiAccount.name,
       balance: apiAccount.amount,
       instrument: apiAccount.currency,
       creditLimit: 0,
-      syncIds: [apiAccount.number] // .slice(-4) обрезать нужно???
+      syncIds: [apiAccount.number]
     }
     if (apiAccount.type === 'card') {
-      // account.title = 'Счет ' + rawTransaction.currency // 'Счет RUB'
       account.type = 'ccard'
       account.storedId = apiAccount.cards
       for (let i = 0; i < apiAccounts.cards.length; i++) {
@@ -76,11 +75,6 @@ function convertDeposit (apiAccounts) {
         payoffInterval = null
       }
     }
-    /*
-    const payoffInterval = {
-      'В конце срока': null
-    }[rawTransaction.percentPaidPeriod]
-    */
     if (payoffInterval === undefined) {
       console.log('Unexpected percentPaidPeriod ' + apiDeposit.percentPaydPeriod)
       return null
@@ -125,19 +119,6 @@ function convertLoan (apiAccounts) {
     const fromDate = new Date(parseDate(apiLoan.openDate))
     const toDate = new Date(parseDate(apiLoan.endDate))
     const { interval, count } = getIntervalBetweenDates(fromDate, toDate)
-    /*
-    const payoffInterval = {
-      'В конце срока': null
-    }[rawTransaction.percentPaidPeriod]
-    if (payoffInterval === undefined) {
-      console.log('Unexpected percentPaidPeriod ' + rawTransaction.percentPaydPeriod)
-      return null
-    }
-    let payoffStep = 1
-    if (payoffInterval === null) {
-      payoffStep = 0
-    }
-    */
     const account = {
       id: apiLoan.repaymentAccount,
       mainAccount: apiLoan.mainAccount,
@@ -246,6 +227,8 @@ export function convertTransaction (rawTransaction, accounts, accountsById) {
     // parseTransferInnerTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice))
 
+  parseAccountIds(transaction, accountsById)
+
   return transaction
 }
 
@@ -253,10 +236,10 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice, 
   for (const pattern of [
     /p2p/i,
     /sbp_in/i,
-    /transfer-own/i,
-    /transfer_rub/i
+    /internal/i
+    // /transfer_rub/i
   ]) {
-    const match = rawTransaction.info.subType.match(pattern)
+    const match = rawTransaction.info.subType.match(pattern) || rawTransaction.view.direction.match(pattern)
     if (match) {
       transaction.comment = rawTransaction.view.comment || rawTransaction.view.mainRequisite
       transaction.movements.push(
@@ -300,17 +283,23 @@ function parseDate (stringDate) {
   const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
   return new Date(date[3], date[2] - 1, date[1])
 }
-/*
-function parseTransferInnerTransaction (rawTransaction, transaction, invoice, accountIds) {
-  if (accountIds.findIndex(transaction.movements[0].account.syncIds) !== -1 &&
-    accountIds.findIndex(transaction.movements[1].account.syncIds) !== -1) {
-    transaction.comment = 'internal' // ???? Что тут надо ???
-    console.log(transaction.comment)
-  }
-  return transaction.comment
-}
-*/
 
+function parseAccountIds (transaction, accountIds) {
+  if (transaction.movements[0].account.syncIds in accountIds === true &&
+    transaction.movements[1].account.syncIds in accountIds === true) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('internal')
+  } else if (transaction.movements[0].account.syncIds in accountIds === false ||
+    transaction.movements[1].account.syncIds in accountIds === false) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('income || outcome')
+  } else if (transaction.movements[0].account.syncIds in accountIds === false &&
+  transaction.movements[1].account.syncIds in accountIds === false) {
+    // transaction.comment = 'internal' // ???? Что тут надо ???
+    console.log('Ошибка - нет своего счета') // ???? Что тут надо ???
+  }
+  // return transaction.comment
+}
 /*
 function parseTransferTransaction (rawTransaction, transaction, invoice) {
   if (rawTransaction.view.direction === 'credit') {

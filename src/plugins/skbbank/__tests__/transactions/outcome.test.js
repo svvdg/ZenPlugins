@@ -58,7 +58,7 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '900000001',
-            account: { id: 'accounts' },
+            account: { id: '40817810700012345678' },
             invoice: null,
             sum: -789.67,
             fee: 0
@@ -67,12 +67,11 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert usual payment', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
     const accountsById = {
-      '40817810239923088530': { id: '40817810239923088530' },
-      '40817810700012345678': { id: '40817810700012345678' }
+      85858585: { id: '40817810700012345678', instrument: 'RUB' },
+      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 
   it.each([
@@ -184,7 +183,7 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '347900002',
-            account: { id: 'accounts' },
+            account: { id: '40817810700012345678' },
             invoice: {
               instrument: 'BYN',
               sum: -43.95
@@ -196,12 +195,11 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert payment in foreign currency', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
     const accountsById = {
-      '40817810239923088530': { id: '40817810239923088530' },
-      '40817810700012345678': { id: '40817810700012345678' }
+      85858585: { id: '40817810700012345678', instrument: 'RUB' },
+      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
 

@@ -163,7 +163,7 @@ describe('convertTransaction', () => {
           {
             id: '900000001',
             account: {
-              id: 'account',
+              id: '40817810900016392697',
               syncIds: ['40817810700012345678']
             },
             invoice: null,
@@ -186,12 +186,12 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert transfer', (rawTransaction, transaction) => {
-    const accounts = { id: 'account', instrument: 'RUB' }
     const accountsById = {
-      '40817810700012345678': { id: '40817810700012345678' },
-      '40817810900087654321': { id: '40817810900087654321' }
+      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' },
+      '40817810900087654321': { id: '40817810900016392697', instrument: 'RUB' },
+      '40817810900016392697': { id: '40817810900016392697', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 
   it.each([
@@ -292,7 +292,7 @@ describe('convertTransaction', () => {
           {
             id: '850999999',
             account: {
-              id: 'account',
+              id: '40817810700012345678',
               syncIds: ['42305810330000000042']
             },
             invoice: null,
@@ -315,12 +315,11 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert account transaction', (rawTransaction, transaction) => {
-    const accounts = { id: 'account', instrument: 'RUB' }
     const accountsById = {
-      '42305810330000000042': { id: '42305810330000000042' },
-      '40817810700012345678': { id: '40817810700012345678' }
+      '42305810330000000042': { id: '42305810330000000042', instrument: 'RUB' },
+      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
 

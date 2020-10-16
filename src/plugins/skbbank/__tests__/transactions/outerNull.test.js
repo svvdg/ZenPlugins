@@ -47,8 +47,10 @@ describe('convertTransaction', () => {
       null
     ]
   ])('should convert Outer', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
+    const accountsById = {
+      '40817810239923082636': { id: '40817810239923082636', instrument: 'RUB' }
+    }
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 
   it.each([
@@ -97,7 +99,10 @@ describe('convertTransaction', () => {
       null
     ]
   ])('should convert Outer', (rawTransaction, transaction) => {
-    const accounts = { id: 'accounts', instrument: 'RUB' }
-    expect(convertTransaction(rawTransaction, accounts)).toEqual(transaction)
+    const accountsById = {
+      '548386******6004': { id: '40817810000015511074', instrument: 'RUB' },
+      170537804: { id: '40817810000015511074', instrument: 'RUB' }
+    }
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })

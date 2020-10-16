@@ -148,14 +148,16 @@ export function findId (accounts) {
     const account = accounts[a]
     for (let i = 0; i < account.syncIds.length; i++) {
       accountId[account.syncIds[i]] = {
-        id: account.id
+        id: account.id,
+        instrument: account.instrument
       }
     }
     if (account.storedId) {
       const accountStorId = {}
       for (let b = 0; b < account.storedId.length; b++) {
         accountStorId[account.storedId[b]] = {
-          id: account.id
+          id: account.id,
+          instrument: account.instrument
         }
       }
       accountId = Object.assign(accountId, accountStorId)
@@ -173,10 +175,9 @@ function findAccountByStoredId (accounts, storedId) {
   }
   console.assert(false, 'cannot find storedId ' + storedId)
 }
+*/
 
- */
-
-export function convertTransaction (rawTransaction, accounts, accountsById) {
+export function convertTransaction (rawTransaction, accountsById) {
   if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
     return null
   }
@@ -185,6 +186,11 @@ export function convertTransaction (rawTransaction, accounts, accountsById) {
     sum: rawTransaction.view.direction === 'debit' ? -rawTransaction.view.amounts.amount : rawTransaction.view.amounts.amount,
     instrument: rawTransaction.view.amounts.currency
   }
+  let account = accountsById[rawTransaction.view.productAccount] || accountsById[rawTransaction.view.productCardId]
+  if (!account && rawTransaction.info.operationType === 'payment') {
+    account = accountsById[rawTransaction.details['payee-card']]
+  }
+  const instrument = account.instrument
 
   /*
   // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
@@ -198,8 +204,8 @@ export function convertTransaction (rawTransaction, accounts, accountsById) {
     date: new Date(rawTransaction.view.dateCreated),
     hold: rawTransaction.view.state !== 'processed',
     merchant: {
-      country: invoice.instrument === accounts.instrument ? null : rawTransaction.details.purpose.slice(-3),
-      city: invoice.instrument === accounts.instrument ? null : rawTransaction.details.terminal.city,
+      country: invoice.instrument === instrument ? null : rawTransaction.details.purpose.slice(-3),
+      city: invoice.instrument === instrument ? null : rawTransaction.details.terminal.city,
       title: rawTransaction.view.descriptions.operationDescription || rawTransaction.view.mainRequisite,
       mcc: null,
       location: null
@@ -207,9 +213,9 @@ export function convertTransaction (rawTransaction, accounts, accountsById) {
     movements: [
       {
         id: rawTransaction.info.id.toString(),
-        account: { id: accounts.id },
-        invoice: invoice.instrument === accounts.instrument ? null : invoice,
-        sum: invoice.instrument === accounts.instrument ? invoice.sum
+        account: { id: account.id },
+        invoice: invoice.instrument === instrument ? null : invoice,
+        sum: invoice.instrument === instrument ? invoice.sum
           : rawTransaction.view.direction === 'debit' ? -rawTransaction.details.convAmount : rawTransaction.details.convAmount,
         fee: 0
       }

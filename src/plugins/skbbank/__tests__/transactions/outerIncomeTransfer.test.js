@@ -63,7 +63,7 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '855984970',
-            account: { id: 'account' },
+            account: { id: '40817810100015387612' },
             invoice: null,
             sum: 10000,
             fee: 0
@@ -84,12 +84,11 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert SBP transfer', (rawTransaction, transaction) => {
-    const accounts = { id: 'account', instrument: 'RUB' }
     const accountsById = {
-      '40817810100015387612': { id: '40817810239923088530' },
-      '40817810700012345678': { id: '40817810700012345678' }
+      '40817810100015387612': { id: '40817810100015387612', instrument: 'RUB' },
+      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 
   it.each([
@@ -276,7 +275,7 @@ describe('convertTransaction', () => {
           {
             id: '856924379',
             account: {
-              id: 'account',
+              id: '40817810000015511074',
               syncIds: [
                 '170537804',
                 '6004']
@@ -303,12 +302,11 @@ describe('convertTransaction', () => {
       }
     ]
   ])('should convert Card transfer', (rawTransaction, transaction) => {
-    const accounts = { id: 'account', instrument: 'RUB' }
     const accountsById = {
-      170537804: { id: '40817810239923088530' },
-      '548386******6004': { id: '40817810700012345678' }
+      170537804: { id: '40817810000015511074', instrument: 'RUB' },
+      '548386******6004': { id: '40817810000015511074', instrument: 'RUB' }
     }
-    expect(convertTransaction(rawTransaction, accounts, accountsById)).toEqual(transaction)
+    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
 

@@ -293,7 +293,6 @@ function parseDate (stringDate) {
 function parseAccountIds (transaction, accountIds) {
   if (transaction.movements[0].account.syncIds in accountIds === true &&
     transaction.movements[1].account.syncIds in accountIds === true) {
-    // transaction.comment = 'internal' // ???? Что тут надо ???
     console.log('internal')
   } else if (transaction.movements[0].account.syncIds in accountIds === false ||
     transaction.movements[1].account.syncIds in accountIds === false) {

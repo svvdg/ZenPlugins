@@ -50,20 +50,17 @@ describe('convertTransaction', () => {
           }
       },
       {
+        '40817810100015387612': { id: 'account', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-08-20T06:08:36.000Z'),
         hold: false,
         comment: 'Перевод с использованием Системы быстрых платежей',
-        merchant: {
-          country: null,
-          city: null,
-          title: 'Николаев Николай Николаевич',
-          mcc: null,
-          location: null
-        },
+        merchant: null,
         movements: [
           {
             id: '855984970',
-            account: { id: '40817810100015387612' },
+            account: { id: 'account' },
             invoice: null,
             sum: 10000,
             fee: 0
@@ -73,7 +70,7 @@ describe('convertTransaction', () => {
             account: {
               type: null,
               instrument: 'RUB',
-              syncIds: ['40817810100015387612'],
+              syncIds: null,
               company: null
             },
             invoice: null,
@@ -82,16 +79,7 @@ describe('convertTransaction', () => {
           }
         ]
       }
-    ]
-  ])('should convert SBP transfer', (rawTransaction, transaction) => {
-    const accountsById = {
-      '40817810100015387612': { id: '40817810100015387612', instrument: 'RUB' },
-      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
-    }
-    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
-  })
-
-  it.each([
+    ],
     [
       {
         info:
@@ -261,24 +249,18 @@ describe('convertTransaction', () => {
           }
       },
       {
+        170537804: { id: 'account', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-08-22T12:23:49.000Z'),
         hold: false,
         comment: 'В "СКБ-Банк" на карту ***6004',
-        merchant: {
-          country: null,
-          city: null,
-          title: 'С карты ***4617',
-          mcc: null,
-          location: null
-        },
+        merchant: null,
         movements: [
           {
             id: '856924379',
             account: {
-              id: '40817810000015511074',
-              syncIds: [
-                '170537804',
-                '6004']
+              id: 'account'
             },
             invoice: null,
             sum: 10000,
@@ -290,8 +272,8 @@ describe('convertTransaction', () => {
               type: null,
               instrument: 'RUB',
               syncIds: [
-                '170971097',
-                '4617'],
+                '427681******4617'
+              ],
               company: null
             },
             invoice: null,
@@ -300,28 +282,86 @@ describe('convertTransaction', () => {
           }
         ]
       }
+    ],
+    [
+      {
+        info:
+          {
+            id: 847324006,
+            operationType: 'account_transaction',
+            skbPaymentOperationType: null,
+            subType: 'transfer-in',
+            hasOfdReceipt: false
+          },
+        view:
+          {
+            operationIcon: 'https://ib.delo.ru/imgcache/bankIcon_ii312846257.png',
+            descriptions:
+              {
+                operationDescription: 'ВАСИЛЬЕВ ВАСИЛИЙ ВАСИЛЬЕВИЧ',
+                productDescription: 'Счет RUB',
+                productType: 'На счет'
+              },
+            amounts:
+              {
+                amount: 6000,
+                currency: 'RUB',
+                feeAmount: 0,
+                feeCurrency: 'RUB',
+                bonusAmount: 0,
+                bonusCurrency: 'RUB',
+                cashBackAmount: 0,
+                cashBackCurrency: 'RUB'
+              },
+            mainRequisite: null,
+            actions: ['sendCheck', 'print', 'reversePayment'],
+            category:
+              {
+                id: 394010366,
+                internalCode: 'replenishment',
+                name: 'Пополнения'
+              },
+            state: 'processed',
+            dateCreated: '2020-07-13T05:47:02+05:00',
+            payWallet: null,
+            direction: 'credit',
+            comment: null,
+            productAccount: '40817810239923088530',
+            productCardId: null
+          }
+      },
+      {
+        '40817810239923088530': { id: 'account', instrument: 'RUB' }
+      },
+      {
+        date: new Date('2020-07-13T05:47:02+05:00'),
+        hold: false,
+        comment: 'На счет',
+        merchant: null,
+        movements: [
+          {
+            id: '847324006',
+            account: { id: 'account' },
+            invoice: null,
+            sum: 6000,
+            fee: 0
+          },
+          {
+            id: null,
+            account: {
+              type: null,
+              instrument: 'RUB',
+              syncIds: null,
+              company: null
+            },
+            invoice: null,
+            sum: -6000,
+            fee: 0
+          }
+        ]
+      }
     ]
-  ])('should convert Card transfer', (rawTransaction, transaction) => {
-    const accountsById = {
-      170537804: { id: '40817810000015511074', instrument: 'RUB' },
-      '548386******6004': { id: '40817810000015511074', instrument: 'RUB' }
-    }
+  ])('should convert outer income transfer', (rawTransaction, accountsById, transaction) => {
     expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
-
-/*
-
-})).toEqual({
-    comment: 'Николаев Николай Николаевич',
-      date: '2020-08-20T11:08:36+05:00',
-      hold: false,
-      id: '855984970',
-      income: 10000,
-      incomeAccount: '40817810100015387612',
-      outcome: 0,
-      outcomeAccount: '40817810100015387612'
-    })
-  })
-
-*/

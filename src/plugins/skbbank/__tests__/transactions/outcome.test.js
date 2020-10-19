@@ -45,6 +45,9 @@ describe('convertTransaction', () => {
         }
       },
       {
+        '40817810700012345678': { id: 'account', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-08-09T12:55:44.000Z'),
         hold: true,
         comment: null,
@@ -58,23 +61,14 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '900000001',
-            account: { id: '40817810700012345678' },
+            account: { id: 'account' },
             invoice: null,
             sum: -789.67,
             fee: 0
           }
         ]
       }
-    ]
-  ])('should convert usual payment', (rawTransaction, transaction) => {
-    const accountsById = {
-      85858585: { id: '40817810700012345678', instrument: 'RUB' },
-      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
-    }
-    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
-  })
-
-  it.each([
+    ],
     [
       {
         info: {
@@ -170,6 +164,9 @@ describe('convertTransaction', () => {
         }
       },
       {
+        '40817810700012345678': { id: 'account', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-07-21T17:17:05.000Z'),
         hold: false,
         comment: null,
@@ -183,7 +180,7 @@ describe('convertTransaction', () => {
         movements: [
           {
             id: '347900002',
-            account: { id: '40817810700012345678' },
+            account: { id: 'account' },
             invoice: {
               instrument: 'BYN',
               sum: -43.95
@@ -194,11 +191,7 @@ describe('convertTransaction', () => {
         ]
       }
     ]
-  ])('should convert payment in foreign currency', (rawTransaction, transaction) => {
-    const accountsById = {
-      85858585: { id: '40817810700012345678', instrument: 'RUB' },
-      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
-    }
+  ])('should convert usual payment', (rawTransaction, accountsById, transaction) => {
     expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })

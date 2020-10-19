@@ -149,34 +149,29 @@ describe('convertTransaction', () => {
         }
       },
       {
+        '40817810900087654321': { id: 'account1', instrument: 'RUB' },
+        '40817810900016392697': { id: 'account', instrument: 'RUB' },
+        '40817810700012345678': { id: 'account2', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-08-09T14:23:32.000Z'),
         hold: false,
-        comment: 'Между счетами',
-        merchant: {
-          country: null,
-          city: null,
-          title: 'Иванов Иван Иванович',
-          mcc: null,
-          location: null
-        },
+        comment: null,
+        merchant: null,
         movements: [
           {
             id: '900000001',
             account: {
-              id: '40817810900016392697',
-              syncIds: ['40817810700012345678']
+              id: 'account2'
             },
             invoice: null,
             sum: 1000,
             fee: 0
           },
           {
-            id: null,
+            id: '900000001',
             account: {
-              type: null,
-              instrument: 'RUB',
-              syncIds: ['40817810900087654321'],
-              company: null
+              id: 'account1'
             },
             invoice: null,
             sum: -1000,
@@ -184,17 +179,7 @@ describe('convertTransaction', () => {
           }
         ]
       }
-    ]
-  ])('should convert transfer', (rawTransaction, transaction) => {
-    const accountsById = {
-      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' },
-      '40817810900087654321': { id: '40817810900016392697', instrument: 'RUB' },
-      '40817810900016392697': { id: '40817810900016392697', instrument: 'RUB' }
-    }
-    expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
-  })
-
-  it.each([
+    ],
     [
       {
         info: {
@@ -278,34 +263,28 @@ describe('convertTransaction', () => {
         }
       },
       {
+        '40817810700012345678': { id: 'account1', instrument: 'RUB' },
+        '42305810330000000042': { id: 'account2', instrument: 'RUB' }
+      },
+      {
         date: new Date('2020-08-07T11:16:16.000Z'),
         hold: false,
-        comment: 'Перевод между счетами через систему ДБО',
-        merchant: {
-          country: null,
-          city: null,
-          title: 'Вклады: открытие вклада Исполнение желаний        +',
-          mcc: null,
-          location: null
-        },
+        comment: null,
+        merchant: null,
         movements: [
           {
             id: '850999999',
             account: {
-              id: '40817810700012345678',
-              syncIds: ['42305810330000000042']
+              id: 'account2'
             },
             invoice: null,
             sum: 10000,
             fee: 0
           },
           {
-            id: null,
+            id: '850999999',
             account: {
-              type: null,
-              instrument: 'RUB',
-              syncIds: ['40817810700012345678'],
-              company: null
+              id: 'account1'
             },
             invoice: null,
             sum: -10000,
@@ -314,11 +293,7 @@ describe('convertTransaction', () => {
         ]
       }
     ]
-  ])('should convert account transaction', (rawTransaction, transaction) => {
-    const accountsById = {
-      '42305810330000000042': { id: '42305810330000000042', instrument: 'RUB' },
-      '40817810700012345678': { id: '40817810700012345678', instrument: 'RUB' }
-    }
+  ])('should convert account transaction', (rawTransaction, accountsById, transaction) => {
     expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })

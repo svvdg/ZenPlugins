@@ -1,5 +1,4 @@
 import { getIntervalBetweenDates } from '../../common/momentDateUtils'
-// import { fetchProducts } from './api'
 
 export function convertAccounts (apiAccounts) {
   let accounts = convertAccountCard(apiAccounts)
@@ -7,12 +6,6 @@ export function convertAccounts (apiAccounts) {
   accounts = accounts.concat(account)
   account = convertDeposit(apiAccounts)
   accounts = accounts.concat(account)
-  // const accounts = apiAccounts.map(parseConvertAccount).filter(x => !!x)
-  // let accounts = apiAccounts.cards.map(convertCard).filter(x => !!x)
-  // accounts = accounts.concat(apiAccounts.accounts.map(convertAccount).filter(x => !!x))
-  // accounts = accounts.concat(apiAccounts.deposits.map(convertDeposit).filter(x => !!x))
-  // accounts = accounts.concat(apiAccounts.loans.map(convertLoan).filter(x => !!x))
-  // console.log(accounts)
   return accounts
 }
 
@@ -166,16 +159,6 @@ export function findId (accounts) {
   }
   return accountsById
 }
-/*
-function findAccountByStoredId (accounts, storedId) {
-  for (const acc of accounts) {
-    if (acc.storedId === storedId) {
-      return acc
-    }
-  }
-  console.assert(false, 'cannot find storedId ' + storedId)
-}
-*/
 
 export function convertTransaction (rawTransaction, accountsById) {
   if (rawTransaction.view.state === 'rejected' || rawTransaction.info.subType === 'loan-repayment') {
@@ -189,17 +172,8 @@ export function convertTransaction (rawTransaction, accountsById) {
   let account = accountsById[rawTransaction.view.productAccount] || accountsById[rawTransaction.view.productCardId]
   if (!account && rawTransaction.info.operationType === 'payment') {
     account = accountsById[rawTransaction.details['payee-card']]
-    // console.log(account)
   }
   const instrument = account.instrument
-
-  /*
-  // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
-  let accountId = rawTransaction.view.productAccount || rawTransaction.view.productCardId
-  if (!accountId && rawTransaction.info.operationType === 'payment') {
-    accountId = findAccountByStoredId(accounts, rawTransaction.details['payee-card']).id
-  }
-  */
 
   const transaction = {
     date: new Date(rawTransaction.view.dateCreated),
@@ -234,17 +208,13 @@ export function convertTransaction (rawTransaction, accountsById) {
     parseTransferAccountTransaction
   ].some(parser => parser(rawTransaction, transaction, invoice, accountsById))
 
-  // parseAccountIds(transaction, accountsById)
-
   return transaction
 }
 
 function parseTransferInnerTransaction (rawTransaction, transaction, invoice, accountsById) {
   if (rawTransaction.view.direction === 'internal' && rawTransaction.info.operationType === 'payment') {
-    // console.log(rawTransaction.details['payer-account'])
     const account1 = accountsById[rawTransaction.details['payer-account']]
     const account2 = accountsById[rawTransaction.details['payee-account']]
-    // const instrument = account1.instrument
     transaction.comment = null
     transaction.merchant = null
     transaction.movements[0].account.id = account2.id
@@ -257,7 +227,6 @@ function parseTransferInnerTransaction (rawTransaction, transaction, invoice, ac
         fee: 0
       })
   } else if (rawTransaction.view.direction === 'internal' && rawTransaction.info.operationType === 'account_transaction') {
-    // console.log(rawTransaction.details.payerAccount)
     const account1 = accountsById[rawTransaction.details.payerAccount]
     const account2 = accountsById[rawTransaction.details.payeeAccount]
     transaction.comment = null
@@ -273,7 +242,7 @@ function parseTransferInnerTransaction (rawTransaction, transaction, invoice, ac
       })
   }
   return false
-} // return false
+}
 
 function parseTransferAccountTransaction (rawTransaction, transaction, invoice, accountsById) {
   for (const pattern of [
@@ -299,15 +268,10 @@ function parseTransferAccountTransaction (rawTransaction, transaction, invoice, 
           fee: 0
         })
       if (rawTransaction.info.subType === 'p2p') {
-        // const card = rawTransaction.view.mainRequisite.match('С карты \\*+(\\d{4})$')
         transaction.comment = rawTransaction.view.descriptions.operationDescription
-        // transaction.merchant = null
-        // transaction.movements[0].account.syncIds = [rawTransaction.details['payee-card'], rawTransaction.details['payee-card-mask-pan'].slice(-4)]
-        transaction.movements[1].account.syncIds = [rawTransaction.details['payer-card-mask-pan']] //, card[1]]
+        transaction.movements[1].account.syncIds = [rawTransaction.details['payer-card-mask-pan']]
       } else if (rawTransaction.info.subType === 'transfer-in') {
         transaction.comment = rawTransaction.view.descriptions.productType
-        // transaction.merchant = null
-        // transaction.movements[1].account.syncIds = null
       }
       return true
     }
@@ -319,121 +283,3 @@ function parseDate (stringDate) {
   const date = stringDate.match(/(\d{2}).(\d{2}).(\d{4})/)
   return new Date(date[3], date[2] - 1, date[1])
 }
-
-function parseAccountIds (transaction, accountsById) {
-  if (transaction.movements[0].account.id in accountsById === true &&
-    transaction.movements[1].account.id in accountsById === true) {
-    console.log('internal')
-  } else if (transaction.movements[0].account.syncIds in accountsById === true &&
-    transaction.movements[1].account.syncIds in accountsById === false) {
-    // transaction.comment = 'internal' // ???? Что тут надо ???
-    console.log('income')
-  } else if (transaction.movements[0].account.syncIds in accountsById === false &&
-    (!transaction.movements[1] || transaction.movements[1].account.syncIds in accountsById === true)) {
-    // transaction.comment = 'internal' // ???? Что тут надо ???
-    console.log('outcome')
-  } else if (transaction.movements[0].account.id in accountsById === false &&
-    transaction.movements[1].account.id in accountsById === false) {
-    // transaction.comment = 'internal' // ???? Что тут надо ???
-    console.log('Ошибка - нет своего счета') // ???? Что тут надо ???
-  }
-  // return transaction.comment
-}
-/*
-function parseTransferTransaction (rawTransaction, transaction, invoice) {
-  if (rawTransaction.view.direction === 'credit') {
-    for (const pattern of [
-      // /Отправка денежного/i,
-      /Пополнения/i,
-      /Переводы/i
-    ]) {
-      const match = rawTransaction.view.category.name.match(pattern)
-      if (match) {
-        transaction.comment = rawTransaction.view.comment
-        transaction.movements.push(
-          {
-            id: null,
-            account: {
-              type: null,
-              instrument: invoice.instrument,
-              syncIds: [
-                rawTransaction.view.productAccount
-                // rawTransaction.view.mainRequisite.match(/\d{-4}/)
-              ],
-              company: null
-            },
-            invoice: null,
-            sum: -invoice.sum,
-            fee: 0
-          }
-        )
-      }
-      return true
-    }
-  }
-  return false
-}
- */
-
-/*
-function findAccountByStoredId (accounts, storedId) {
-  for (const acc of accounts) {
-    if (acc.storedId === storedId) {
-      return acc
-    }
-  }
-  console.assert(false, 'cannot find storedId ' + storedId)
-}
-
-/*
-export function convertAccountTransaction (json, accounts) {
-  const transaction = {
-    id: json.info.id.toString(),
-    date: json.view.dateCreated,
-    hold: json.view.state !== 'processed'
-  }
-  // Для операции стягивания в productAccount будет null, в productCardId - идентификатор внешней карты.
-  let accountId = json.view.productAccount
-  if (!accountId && json.info.operationType === 'payment') {
-    accountId = findAccountByStoredId(accounts, json.details['payee-card']).id
-  }
-  transaction.incomeAccount = transaction.outcomeAccount = accountId
-  transaction.income = transaction.outcome = 0
-  if (json.view.direction === 'debit') {
-    transaction.outcome = json.view.amounts.amount
-    transaction.payee = json.view.descriptions.operationDescription
-    if (json.view.amounts.currency !== 'RUB' && json.info.operationType === 'card_transaction') {
-      transaction.opOutcome = json.view.amounts.amount
-      transaction.opOutcomeInstrument = json.view.amounts.currency
-      transaction.outcome = json.details.convAmount
-    }
-  } else if (json.view.direction === 'credit') {
-    transaction.income = json.view.amounts.amount
-    transaction.comment = json.view.descriptions.operationDescription || json.view.mainRequisite
-    if (json.view.amounts.currency !== 'RUB') {
-      transaction.opIncome = json.view.amounts.amount
-      transaction.opIncomeInstrument = json.view.amounts.currency
-      transaction.income = json.details.convAmount
-    }
-  } else if (json.view.direction === 'internal') {
-    transaction.income = json.view.amounts.amount
-    transaction.outcome = json.view.amounts.amount
-    transaction.comment = json.view.descriptions.operationDescription || json.view.mainRequisite
-    if (json.info.operationType === 'account_transaction') {
-      transaction.outcomeAccount = json.details.payeeAccount
-    } else if (json.info.operationType === 'payment') {
-      transaction.incomeAccount = json.details['payer-account']
-      transaction.outcomeAccount = json.details['payee-account']
-    }
-  } else {
-    console.assert(false, 'unexpected transaction direction ' + json.view.direction)
-  }
-  if (json.view.mainRequisite) {
-    const mcc = json.view.mainRequisite.match('МСС: (\\d+)')
-    if (mcc) {
-      transaction.mcc = Number(mcc[1])
-    }
-  }
-  return transaction
-}
- */

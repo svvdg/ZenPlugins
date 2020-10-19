@@ -119,7 +119,7 @@ describe('convertAccounts', () => {
             canIssuePlastic: false
           },
           {
-            id: '4136158', // Вторая карта на один лицевой счет. Как правильно жолжны быть заполнены поля ???
+            id: '4136158', // Вторая карта на один лицевой счет.
             state_description: 'Действующая',
             blocked: false,
             name: 'Mastercard Unembossed',
@@ -136,8 +136,8 @@ describe('convertAccounts', () => {
             primaryAccount: '40817810000015511074',
             accountId: 170522760,
             tariffLink: 'https://www.skbbank.ru/chastnym-licam/karty/icard',
-            order: '1', // если это вторая карта, то тут 2  ???
-            primary: true, // если это вторая карта, или тут  false ???
+            order: '1',
+            primary: true,
             cardId: '4136158',
             brand: 'Mastercard Unembossed',
             storedId: 310720201,
@@ -185,12 +185,12 @@ describe('convertAccounts', () => {
           instrument: 'RUB',
           balance: 7302.49,
           creditLimit: 0,
-          syncIds: [ // Или как должно быть ???
+          syncIds: [
             '40817810000015511074',
             '548386******6004',
             '123456******7890'
           ],
-          storedId: [170537804, 310720201] // Или как должно быть ???
+          storedId: [170537804, 310720201]
         }
       ]
     ]

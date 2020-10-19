@@ -14,7 +14,7 @@ describe('convertFindId', () => {
           syncIds: ['40817810900087654321']
         },
         {
-          id: '40817810239923082636', // или 45507810939900624978 ???
+          id: '40817810239923082636',
           type: 'loan',
           title: 'ПЕРСОНАЛЬНОЕ ПРЕДЛОЖЕНИЕ (потребительский кредит)',
           instrument: 'RUB',
@@ -22,9 +22,9 @@ describe('convertFindId', () => {
           capitalization: true,
           percent: 26.9,
           startDate: new Date('2014-03-12T20:00:00.000Z'),
-          endDateOffset: 116, // ???
+          endDateOffset: 116,
           endDateOffsetInterval: 'month',
-          syncIds: ['40817810239923082636', '45507810939900624978'] // mainAccount: '45507810939900624978',
+          syncIds: ['40817810239923082636', '45507810939900624978']
         },
         {
           id: '40817810000015511074',
@@ -62,7 +62,7 @@ describe('convertFindId', () => {
           instrument: 'RUB',
           balance: 17302.49,
           creditLimit: 0,
-          syncIds: [ // Или как должно быть ???
+          syncIds: [
             '40817810000015511074',
             '548386******6004',
             '123456******7890'
@@ -79,7 +79,7 @@ describe('convertFindId', () => {
         170537804: { id: '40817810000015511074', instrument: 'RUB' },
         310720201: { id: '40817810000015511074', instrument: 'RUB' },
         '123456******7890': { id: '40817810000015511074', instrument: 'RUB' },
-        '42305810330000000042': { id: '42305810330000000042', instrument: 'RUB' } // close_account: '40817810700012345678',
+        '42305810330000000042': { id: '42305810330000000042', instrument: 'RUB' }
       }
     ]
   ])('converts findId Account', (accounts, accountsById) => {

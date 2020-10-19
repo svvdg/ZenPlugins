@@ -195,32 +195,3 @@ describe('convertTransaction', () => {
     expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
-
-/*
-expect(transaction).toEqual({
-  id: '900000001',
-  hold: true,
-  date: '2020-08-09T17:55:44+05:00',
-  income: 0,
-  incomeAccount: '40817810700012345678',
-  mcc: 5411,
-  outcome: 789.67,
-  outcomeAccount: '40817810700012345678',
-  payee: 'Пятерочка'
- */
-
-/*
-expect(transaction).toEqual({
-  id: '347900002',
-  hold: false,
-  date: '2020-07-21T22:17:05+05:00',
-  income: 0,
-  incomeAccount: '40817810700012345678',
-  outcome: 1430.9,
-  outcomeAccount: '40817810700012345678',
-  mcc: 5812,
-  opOutcome: 43.95,
-  opOutcomeInstrument: 'BYN',
-  payee: 'RESTORAN "VASILKI"'
-})
- */

@@ -297,30 +297,3 @@ describe('convertTransaction', () => {
     expect(convertTransaction(rawTransaction, accountsById)).toEqual(transaction)
   })
 })
-
-/*
-expect(transaction).toEqual({
-  id: '900000001',
-  hold: false,
-  date: '2020-08-09T19:23:32+05:00',
-  income: 1000,
-  incomeAccount: '40817810900087654321',
-  outcome: 1000,
-  outcomeAccount: '40817810700012345678',
-  comment: 'Между счетами'
-})
- */
-
-/*
-expect(transaction).toEqual({
-  id: '850999999',
-  hold: false,
-  date: '2020-08-07T16:16:16+05:00',
-  income: 10000,
-  incomeAccount: '40817810700012345678',
-  outcome: 10000,
-  outcomeAccount: '42305810330000000042',
-  comment: 'Вклады: открытие вклада Исполнение желаний        +'
-})
-
- */

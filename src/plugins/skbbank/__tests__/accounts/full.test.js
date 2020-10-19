@@ -246,8 +246,8 @@ describe('convertAccounts', () => {
               primaryAccount: '40817810000015511074',
               accountId: 170522760,
               tariffLink: 'https://www.skbbank.ru/chastnym-licam/karty/icard',
-              order: '1', // если это вторая карта, то тут 2  ???
-              primary: true, // если это вторая карта, или тут  false ???
+              order: '1',
+              primary: true,
               cardId: '4136158',
               brand: 'Mastercard Unembossed',
               storedId: 310720201,

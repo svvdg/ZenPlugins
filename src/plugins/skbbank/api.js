@@ -99,10 +99,6 @@ export async function fetchProducts () {
   const productsResp = await fetchApiJson('v2/products?getAll=true')
   console.assert(productsResp.status === 200, 'Не удалось получить список счетов', { productsResp })
   return productsResp.body
-  // cards: productsResp.body.cards,
-  // accounts: productsResp.body.accounts,
-  // deposits: productsResp.body.deposits,
-  // loans: productsResp.body.loans
 }
 
 /**
